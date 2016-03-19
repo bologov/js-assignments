@@ -69,7 +69,7 @@ function getStringFromTemplate(firstName, lastName) {
  *   'Hello, Chuck Norris!' => 'Chuck Norris'
  */
 function extractNameFromTemplate(value) {
-    return value.slice(7, value.length - 1);
+    return value.slice(7, -1);
 }
 
 
@@ -84,7 +84,7 @@ function extractNameFromTemplate(value) {
  *   'cat'       => 'c'
  */
 function getFirstChar(value) {
-    return value.charAt(0);
+    return value[0];
 }
 
 /**
@@ -130,13 +130,7 @@ function repeatString(value, count) {
  *   'ABABAB','BA' => 'ABAB'
  */
 function removeFirstOccurrences(str, value) {
-    if (str.indexOf(value) === 0) {
-        return str.slice(value.length);
-    }
-    else
-        return String.prototype.concat(
-            str.slice(0, str.indexOf(value)), 
-            str.slice(str.indexOf(value) + value.length));
+    return str.replace(value, "");
 }
 
 /**
@@ -151,10 +145,7 @@ function removeFirstOccurrences(str, value) {
  *   '<a>' => 'a'
  */
 function unbracketTag(str) {
-    return String.prototype.concat(
-            str.slice(0, str.indexOf("<")), 
-            str.slice(str.indexOf("<") + 1, str.lastIndexOf(">")),
-            str.slice(str.lastIndexOf(">") + 1));
+    return str.slice(1, -1);
 }
 
 
@@ -183,8 +174,7 @@ function convertToUpperCase(str) {
  *   'info@gmail.com' => ['info@gmail.com']
  */
 function extractEmails(str) {
-    var regEx = /[A-Za-z0-9\.\-\_]+\@{1}[A-Za-z0-9\-\_]+\.{1}[a-z]{2,6}/g;
-    return str.match(/[A-Za-z0-9\.\-\_]+\@{1}[A-Za-z0-9\-\_]+\.{1}[a-z]{2,6}/g);
+    return str.split(";");
 }
 
 /**
@@ -238,19 +228,13 @@ function getRectangleString(width, height) {
  */
 function encodeToRot13(str) {
     var result = "";
-    for (var i = 0; i < str.length; i++) {
-
-        if (str.charAt(i).toUpperCase() < "A" || str.charAt(i).toUpperCase() > "Z") {
-            result += str.charAt(i);
+    const lettersCount = 26;
+    return str.replace(/[A-Za-z]/g, function(letter) {
+        if (letter.toUpperCase() >= "N") {
+            return String.fromCharCode((letter.charCodeAt(0) - lettersCount + 13));
         }
-        else if (str.charAt(i).toUpperCase() >= "N") {
-            result += String.fromCharCode((str.charCodeAt(i) - 26 + 13));
-        }
-        else {
-            result += String.fromCharCode((str.charCodeAt(i) + 13));
-        }
-    }
-    return result;
+        return String.fromCharCode((letter.charCodeAt(0) + 13));
+    });
 }
 
 /**
