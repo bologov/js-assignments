@@ -1,4 +1,3 @@
-debugger;
 'use strict';
 
 /********************************************************************************************
@@ -74,7 +73,7 @@ function getAverage(value1, value2) {
  *   (-5,0) (10,-10) => 18.027756377319946
  */
 function getDistanceBetweenPoints(x1, y1, x2, y2) {
-    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    return Math.hypot(x2 - x1, y2 - y1);
 }
 
 /**
@@ -111,10 +110,10 @@ function getLinearEquationRoot(a, b) {
  *   (0,1) (1,2)     => 0
  */
 function getAngleBetweenVectors(x1, y1, x2, y2) {
-    var scalMult = x1 * x2 + y1 * y2;
-    var absMul = Math.sqrt(x1 * x1 + y1 * y1) * Math.sqrt(x2 * x2 + y2 * y2);
+    var scalMul = x1 * x2 + y1 * y2;
+    var absMul = Math.hypot(x1, y1) * Math.hypot(x2, y2);
 
-    return Math.acos(scalMult / absMul);
+    return Math.acos(scalMul / absMul);
 }
 
 /**
@@ -163,7 +162,7 @@ function parseNumberFromString(value) {
  *   1,2,3   => 3.741657386773941
  */
 function getParallelipidedDiagonal(a,b,c) {
-    return Math.sqrt(a * a + b * b + c * c);
+    return Math.hypot(a, b, c);
 }
 
 /**
@@ -206,7 +205,7 @@ function roundToPowerOfTen(num, pow) {
  *   17 => true
  */
 function isPrime(n) {
-    for (var i = 2; i <= Math.sqrt(n); i++) {
+    for (let i = 2; i <= Math.sqrt(n); i++) {
         if (n % i === 0) {
             return false;
         }
