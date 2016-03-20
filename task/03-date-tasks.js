@@ -102,7 +102,12 @@ function angleBetweenClockHands(date) {
 
 	var angle = Math.abs(0.5 * (60 * hour - 11 * minute));
 
-  return angle > 180 ? (360 - angle) * Math.PI / 180 : angle * Math.PI / 180;
+  if (angle > 180) {
+    return (360 - angle) * Math.PI / 180;
+  }
+  else {
+    return angle * Math.PI / 180;
+  }
 }
 
 

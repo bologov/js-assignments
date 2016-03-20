@@ -334,8 +334,9 @@ function getPositivesCount(arr) {
         if (typeof(cur) === 'number' && cur > 0) {
             return prev + 1;
         }
-
-        return prev;
+        else {
+            return prev;
+        }      
    }, 0);
 }
  
@@ -394,7 +395,9 @@ function getFalsyValuesCount(arr) {
         if (Boolean(cur) === false) {
             return prev + 1;
         }
-        return prev;
+        else {
+            return prev;
+        }
     }, 0);
 }
 
@@ -461,10 +464,10 @@ function toStringList(arr) {
 function sortCitiesArray(arr) {
     return arr.sort(function(a, b) {
         if (a.country === b.country) {
-            return a.city > b.city;
+            return a.city.localeCompare(b.city);
         }
         else
-            return a.country > b.country;
+            return a.country.localeCompare(b.country);
     });
 }
 
