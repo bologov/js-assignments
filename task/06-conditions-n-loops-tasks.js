@@ -30,7 +30,14 @@
  *
  */
 function getFizzBuzz(num) {
-    throw new Error('Not implemented');
+    var result = "";
+    if (num % 3 === 0) {
+        result += 'Fizz';
+    }
+    if (num % 5 === 0) {
+        result += 'Buzz';
+    }
+    return result || num;
 }
 
 
@@ -46,7 +53,10 @@ function getFizzBuzz(num) {
  *   10 => 3628800
  */
 function getFactorial(n) {
-    throw new Error('Not implemented');
+    if (n == 1) {
+        return 1;
+    }
+    return n * getFactorial(n - 1);
 }
 
 
@@ -63,7 +73,11 @@ function getFactorial(n) {
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
 function getSumBetweenNumbers(n1, n2) {
-    throw new Error('Not implemented');
+    var result = 0;
+    for (let i = n1; i <= n2; i++) {
+        result += i;
+    }
+    return result;
 }
 
 
@@ -82,7 +96,7 @@ function getSumBetweenNumbers(n1, n2) {
  *   10,10,10 =>  true
  */
 function isTriangle(a,b,c) {
-    throw new Error('Not implemented');
+    return a + b > c && a + c > b && b + c > a;
 }
 
 
@@ -119,7 +133,11 @@ function isTriangle(a,b,c) {
  *  
  */
 function doRectanglesOverlap(rect1, rect2) {
-    throw new Error('Not implemented');
+    return rect1.left < rect2.left + rect2.width 
+        && rect1.left + rect1.width > rect2.left 
+        && rect1.top < rect2.top + rect2.height
+        && rect1.top + rect1.height > rect2.top;
+
 }
 
 
@@ -150,7 +168,7 @@ function doRectanglesOverlap(rect1, rect2) {
  *   
  */
 function isInsideCircle(circle, point) {
-    throw new Error('Not implemented');
+    return Math.hypot(circle.center.x - point.x, circle.center.y - point.y) < circle.radius;
 }
 
 
@@ -166,7 +184,28 @@ function isInsideCircle(circle, point) {
  *   'entente' => null
  */
 function findFirstSingleChar(str) {
-    throw new Error('Not implemented');
+    var char = "";
+    var isSingle = true;
+
+    for (let i = 0; i < str.length; i++) {
+        char = str[i];
+        isSingle = true;
+
+        for (let j = 0; j < str.length; j++) {
+
+            if (i !== j && str[j] === char) {
+                isSingle = false;
+                break;
+            }
+
+        }
+
+        if (isSingle) {
+            return char;
+        }
+    }
+
+    return null;
 }
 
 
@@ -192,7 +231,20 @@ function findFirstSingleChar(str) {
  *
  */
 function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
-    throw new Error('Not implemented');
+    var result = "";
+
+    result += isStartIncluded ? '[' : '(';
+
+    if (a > b) {
+        result += b + ', ' + a;
+    }
+    else {
+        result += a + ', ' + b;
+    }
+
+    result += isEndIncluded ? ']' : ')';
+
+    return result;
 }
 
 
@@ -209,7 +261,13 @@ function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
  * 'noon' => 'noon'
  */
 function reverseString(str) {
-    throw new Error('Not implemented');
+    var newstr = "";
+
+    for (let i = str.length - 1; i >= 0; i--) {
+        newstr += str[i];
+    }
+
+    return newstr;
 }
 
 
@@ -226,7 +284,17 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-    throw new Error('Not implemented');
+    var length = num.toString().length;
+    var digit = 0;
+    var result = 0;
+
+    for (let i = 1; i <= length; i++) {
+        digit = num % 10;    
+        num = (num - digit) / 10;
+        result += Math.pow(10, length - i) * digit;
+    }
+
+    return result;
 }
 
 
@@ -251,7 +319,26 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-    throw new Error('Not implemented');
+    const biggestDigit = 9; 
+
+    var ccnStr = ccn.toString();
+    var length = ccnStr.length;
+    var digit = 0;
+    var checkSum = 0;
+
+
+    for (let i = 1; i <= length; i++) {
+        digit = Number.parseInt(ccnStr[length - i]);
+        if (i % 2 === 0) {
+            digit *= 2;
+            if (digit > biggestDigit) {
+                digit -= biggestDigit;
+            }
+        }   
+        checkSum += digit;
+    }
+
+    return checkSum % 10 === 0;  
 }
 
 
@@ -270,7 +357,26 @@ function isCreditCardNumber(ccn) {
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
 function getDigitalRoot(num) {
-    throw new Error('Not implemented');
+    const biggestDigit = 9;
+
+    var length = 0;
+    var digit = 0;
+    var result = num;
+
+    do {   
+        num = result;
+        length = result.toString().length;
+        result = 0;
+
+        for (let i = 1; i <= length; i++) {
+            digit = num % 10;    
+            num = (num - digit) / 10;
+            result += digit;
+        }
+    }
+    while (result > biggestDigit)
+
+    return result;
 }
 
 
@@ -296,7 +402,27 @@ function getDigitalRoot(num) {
  *   '{[(<{[]}>)]}' = true 
  */
 function isBracketsBalanced(str) {
-    throw new Error('Not implemented');
+    const maxDistanceInUnicode = 2;
+
+    var bracketsArr = [];
+    var bracket = "";
+
+    for (let i = 0; i < str.length; i++) {
+        bracket = str[i];
+
+        if (bracket === "[" || bracket === "(" || bracket === "{" || bracket === "<") {
+            bracketsArr.push(bracket);
+        }
+        else {
+            if (bracketsArr.length === 0) {
+                return false;
+            }
+            else if (Math.abs(bracketsArr.pop().charCodeAt() - bracket.charCodeAt()) > maxDistanceInUnicode) {
+                return false;
+            }
+        }
+    }
+    return bracketsArr.length === 0;
 }
 
 
@@ -332,7 +458,116 @@ function isBracketsBalanced(str) {
  *
  */
 function timespanToHumanString(startDate, endDate) {
-    throw new Error('Not implemented');
+    const milliInSec = 1000;
+    const secInMin = 60;
+    const minInHour = 60;
+    const hourInDay = 24;
+    const dayInMonth = 30;
+    const dayInYear = 365;
+    const smallestTime = 2;
+
+    var time = endDate.getTime() - startDate.getTime();
+    var timeUnit = "";
+    var roundTime = 0;
+    var number;
+
+    while (time != 0) {
+
+        time /= milliInSec;
+        if (time > 0 && time <= 45) {    
+            number = "a few";
+            timeUnit = "seconds";
+            break;
+        }
+        if (time > 45 && time <= 90) {
+            number = "a";
+            timeUnit = "minute";
+            break;
+        }
+
+
+        time /= secInMin;
+        if (Math.round(time) >= 2 &&  time <= 45) {          
+            number = smallestTime;
+            roundTime = Math.floor(time);
+            if (number < roundTime) {
+                number = roundTime;
+            }
+            timeUnit = "minutes";
+            break;
+        }
+        if (time > 45 &&  time <= 90) {
+            number = "an";
+            timeUnit = "hour";
+            break;
+        }
+
+        time /= minInHour;
+        if (Math.round(time) >= 2 &&  time <= 22) {
+            number = smallestTime;
+            roundTime = Math.floor(time);
+            if (number < roundTime) {
+                if (time % 1 > 0.5) {
+                    number = Math.round(time);
+                }
+                else {
+                    number = roundTime;
+                }
+            }
+            timeUnit = "hours";
+            break;
+        }
+        if (time > 22 &&  time <= 36) {
+            number = "a";
+            timeUnit = "day";
+            break;
+        }
+
+        time /= hourInDay;    
+        if (time <= 25) {
+            number = smallestTime;
+            roundTime = Math.floor(time);
+            if (number < roundTime) {
+                if (time % 1 > 0.5) {
+                    number = Math.round(time);
+                }
+                else {
+                    number = roundTime;
+                }
+            }
+            timeUnit = "days";
+            break;
+        }
+        else if (time <= 45) {
+            number = "a"
+            timeUnit = "month";
+            break;
+        }
+        else if (time <= 345) {
+            number = smallestTime;
+            roundTime = Math.round(time / dayInMonth);      
+            if (number < roundTime) {
+                number = roundTime;
+            }
+            timeUnit = "months";
+            break;
+        }
+        else if (time <= 545) {
+            number = "a"
+            timeUnit = "year";
+            break;
+        }
+        else {
+            number = smallestTime;
+            roundTime = Math.round(time / dayInYear);
+            if (number < roundTime) {
+                number = roundTime;
+            }
+            timeUnit = "years";
+            break;
+        }
+    }
+    return `${number} ${timeUnit} ago`;
 }
 
 
@@ -356,7 +591,17 @@ function timespanToHumanString(startDate, endDate) {
  *    365, 10 => '365'
  */
 function toNaryString(num, n) {
-    throw new Error('Not implemented');
+    var str = "";
+    var remainder = 0;
+
+    while (num >= n)
+    {
+        remainder = num % n;
+        str = remainder + str;
+        num = (num - remainder) / n; 
+    }
+
+    return num + str;
 }
 
 
@@ -373,7 +618,24 @@ function toNaryString(num, n) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
-    throw new Error('Not implemented');
+    var commonPath = "";
+    var strNum = pathes.length;
+    var char = "";
+
+    var minLength = pathes.reduce(function(prev, cur) {
+        return prev.length < cur.length ? prev.length : cur.length;
+    }, pathes[0].length);
+
+    for (let i = 0; i < minLength; i++) {
+        char = pathes[0][i];
+        for (let cur = 1; cur < strNum; cur++) {
+            if (char !== pathes[cur][i]) {
+                return commonPath.slice(0, commonPath.lastIndexOf('/') + 1);
+            }
+        }
+        commonPath += char;
+    }
+    return commonPath.slice(0, commonPath.lastIndexOf('/') + 1);
 }
 
 
@@ -396,7 +658,22 @@ function getCommonDirectoryPath(pathes) {
  *
  */
 function getMatrixProduct(m1, m2) {
-    throw new Error('Not implemented');
+    var rows = m1.length;
+    var columns = m2[0].length;
+    var givenSecondDim = m2.length;
+
+    var product = new Array(rows).fill(0).map(function() {
+        return new Array(columns).fill(0);
+    });
+
+    return product.map(function(row, i) {
+        return row.map(function(elem, j) {
+            for (let k = 0; k < givenSecondDim; k++) {
+                elem += m1[i][k] * m2[k][j];
+            }
+            return elem;
+        });
+    });
 }
 
 
@@ -431,7 +708,81 @@ function getMatrixProduct(m1, m2) {
  *
  */
 function evaluateTicTacToePosition(position) {
-    throw new Error('Not implemented');
+    const areaSize = 3;
+    var char = "";
+    var isWinner = true;
+
+    //Row check
+    for (let i = 0; i < areaSize; i++) {
+        isWinner = true;
+        char = position[i][0];
+        if (char === undefined) {
+            isWinner = false;
+            continue;
+        }
+        for (let j = 1; j < areaSize; j++) {
+            if (char !== position[i][j] || char === undefined) {
+                isWinner = false;
+                break;
+            }
+        }
+        if (isWinner) {
+            return char;
+        }
+    }
+
+    //Column check
+    for (let j = 0; j < areaSize; j++) {
+        isWinner = true;
+        char = position[0][j];
+        if (char === undefined) {
+            isWinner = false;
+            continue;
+        }
+        for (let i = 1; i < areaSize; i++) {
+            if (char !== position[i][j] || char === undefined) {
+                isWinner = false;
+                break;
+            }
+        }
+        if (isWinner) {
+            return char;
+        }
+    }
+
+    //Diagonal check
+    char = position[0][0];
+    isWinner = true;
+    if (char === undefined) {
+        isWinner = false;
+    }
+    for (let i = 1; i < areaSize; i++) {
+        if (char !== position[i][i] || char === undefined) {
+            isWinner = false;
+            break;
+        }
+    }
+    if (isWinner) {
+        return char;
+    }
+    
+
+    //Antidiagonal check
+    char = position[0][areaSize - 1];
+    isWinner = true;
+    if (char === undefined) {
+        isWinner = false;
+    }
+    for (let i = 1; i < areaSize; i++) {
+        if (char !== position[i][areaSize - 1 - i] || char === undefined) {
+            isWinner = false;
+            break;
+        }
+    }
+    if (isWinner) {
+        return char;
+    }
+    return undefined;
 }
 
 
