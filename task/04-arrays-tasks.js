@@ -490,9 +490,13 @@ function sortCitiesArray(arr) {
  *           [0,0,0,0,1]]   
  */
 function getIdentityMatrix(n) {
-    return Array(n).fill(Array(n)).map(function(__, index1, array) {
-        return array.map(function(__, index2) {
-            return index2 === index1 ? 1 : 0;
+    var matrix = new Array(n).fill(0).map(function() {
+        return new Array(n).fill(0);
+    });
+
+    return matrix.map(function(row, i) {
+        return row.map(function(__, j) {
+            return i === j ? 1 : 0;
         });
     });
 }
