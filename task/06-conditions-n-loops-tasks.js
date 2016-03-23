@@ -622,7 +622,7 @@ function getCommonDirectoryPath(pathes) {
     var strNum = pathes.length;
     var char = "";
 
-    var minLength = pathes.reduce(function(prev, cur) {
+    var minLength = pathes.reduce((prev, cur) => {
         return prev.length < cur.length ? prev.length : cur.length;
     }, pathes[0].length);
 
@@ -662,12 +662,12 @@ function getMatrixProduct(m1, m2) {
     var columns = m2[0].length;
     var givenSecondDim = m2.length;
 
-    var product = new Array(rows).fill(0).map(function() {
+    var product = new Array(rows).fill(0).map(() => {
         return new Array(columns).fill(0);
     });
 
-    return product.map(function(row, i) {
-        return row.map(function(elem, j) {
+    return product.map((row, i) => {
+        return row.map((elem, j) => {
             for (let k = 0; k < givenSecondDim; k++) {
                 elem += m1[i][k] * m2[k][j];
             }

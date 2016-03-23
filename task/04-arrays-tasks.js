@@ -72,7 +72,7 @@ function doubleArray(arr) {
  *    [] => [] 
  */
 function getArrayOfPositives(arr) {
-    return arr.filter((elem) => {
+    return arr.filter(elem => {
         return elem > 0;
     });
 }
@@ -89,7 +89,7 @@ function getArrayOfPositives(arr) {
  *    [ 'cat, 'dog', 'raccon' ] => [ 'cat', 'dog', 'racoon' ]
  */
 function getArrayOfStrings(arr) {
-    return arr.filter((elem) => {
+    return arr.filter(elem => {
         return typeof elem === 'string';
     });
 }
@@ -108,7 +108,7 @@ function getArrayOfStrings(arr) {
  *    [ false, 0, NaN, '', undefined ]   => [ ]
  */
 function removeFalsyValues(arr) {
-    return arr.filter((elem) => {
+    return arr.filter(elem => {
         return Boolean(elem);
     });
 }
@@ -124,7 +124,7 @@ function removeFalsyValues(arr) {
  *    [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ]  => [ 'A', 'B', 'C', 'D', 'E', 'F', 'G' ]
  */
 function getUpperCaseStrings(arr) {
-    return arr.map((elem) => {
+    return arr.map(elem => {
         return elem.toUpperCase();
     });
 }
@@ -141,7 +141,7 @@ function getUpperCaseStrings(arr) {
  *    [ 'angular', 'react', 'ember' ] => [ 7, 5, 5 ]
  */
 function getStringsLength(arr) {
-    return arr.map((elem) => {
+    return arr.map(elem => {
         return elem.length;
     });
 }
@@ -229,7 +229,7 @@ function toCsvText(arr) {
  *   [ 10, 100, -1 ]      => [ 100, 10000, 1 ]
  */
 function toArrayOfSquares(arr) {
-    return arr.map((elem) => {
+    return arr.map(elem => {
         return elem * elem;
     });
 }
@@ -415,7 +415,7 @@ function getFalsyValuesCount(arr) {
  *    [ true, 0, 1, 'true' ], true => 1
  */
 function findAllOccurences(arr, item) {
-    return arr.filter((elem) => {
+    return arr.filter(elem => {
         return elem === item;
     }).length; 
 }
@@ -569,7 +569,7 @@ function distinct(arr) {
 function group(array, keySelector, valueSelector) {
     var map = new Map();
 
-    array.map((cur) => {
+    array.map(cur => {
         if (map.has(keySelector(cur))) {
             map.set(keySelector(cur), map.get(keySelector(cur)).concat(valueSelector(cur))); 
         }

@@ -31,7 +31,8 @@
  * @return {RegExp}
  */
 function getRegexForGuid() {
-   return /{[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}}/i;
+    var hex = '[\\da-f]';
+    return new RegExp(`{${hex}{8}-${hex}{4}-${hex}{4}-${hex}{4}-${hex}{12}}`, 'i');
 }
 
 
@@ -53,7 +54,7 @@ function getRegexForGuid() {
  *
  */
 function getRegexForPitSpot() {
-   return /^[sr]|p(?=i)/;
+    return /^[sr]|p(?=i)/;
 }
 
 
@@ -72,7 +73,8 @@ function getRegexForPitSpot() {
  * @return {RegExp}
  */
 function getRegexForIPv4() {
-   return /^(?!.*(25[6-9]|2[6-9]\d|[3-9]\d{2}))\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3}$/
+    var ipNum = '\\d{1,3}';
+    return new RegExp(`^(?!.*(25[6-9]|2[6-9]\\d|[3-9]\\d{2}))${ipNum}\\.${ipNum}\\.${ipNum}\\.${ipNum}$`);
 }
 
 

@@ -66,6 +66,7 @@ function* getFibonacciSequence() {
     var fnum1 = 0;
     var fnum2 = 1;
     var cur;
+    
     while (true) {
         cur = fnum1;
         fnum1 = fnum2
