@@ -38,6 +38,7 @@ function* get99BottlesOfBeer() {
     while (num !== "no more")
     {
         yield `${num} bottle${s} of beer on the wall, ${num} bottle${s} of beer.`;
+
         num--;
         if (num === 1) {
             s = "";
@@ -46,6 +47,7 @@ function* get99BottlesOfBeer() {
             s = "s";
             num = "no more";
         }
+        
         yield `Take one down and pass it around, ${num} bottle${s} of beer on the wall.`;
     }
     yield "No more bottles of beer on the wall, no more bottles of beer.";
@@ -112,18 +114,15 @@ function* depthTraversalTree(root) {
 
     while (root != undefined) {
 
-        if (!('beenThere' in root)){
-            if ('children' in root) {
-                substack = [];
-                for (let childNode of root.children) {
-                    substack.push(childNode);
-                }
-                stack = substack.concat(stack);
+        if ('children' in root) {
+            substack = [];
+            for (let childNode of root.children) {
+                substack.push(childNode);
             }
+            stack = substack.concat(stack);
         }
 
         yield root;
-        root.beenThere = true;
         root = stack.shift();
     }
 }
@@ -151,7 +150,6 @@ function* depthTraversalTree(root) {
  */
 function* breadthTraversalTree(root) {
     var stack = [];
-    var substack = [];
 
     while (root != undefined) {
 
@@ -181,50 +179,26 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
+    var source1 = source1();
+    var source2 = source2();
+
     var val1, val2;
-    var prev1, prev2;
-    var i = 0;
-    var iterations = 1;
 
     while (true) {
 
-        i = 0;
-        for (val1 of source1()) {
-            i++;
-            if (i === iterations) {
-                break;
-            }        
-        }
-        i = 0;
-        for (val2 of source2()) {
-            i++;
-            if (i === iterations) {
-                break;
-            }        
-        }
-        iterations++;
+        val1 = source1.next();
+        val2 = source2.next();
 
-        if (prev1 === val1) {
-            yield val2;
-            break;
+        if (val1.done) {
+            yield val2.value;
+            yield* source2;
         }
-        if (prev2 === val2) {
-            yield val1;
-            break;
+        if (val2.done) {
+            yield val1.value;
+            yield* source1;
         }
 
-        if (val1 < val2) {
-            yield val1;
-            yield val2;
-        }
-        else {
-            yield val2;
-            yield val1;
-        }
-
-        prev1 = val1;
-        prev2 = val2;
-        break;
+        yield* [val1.value, val2.value].sort((a, b) => a - b);
     }
 }
 
