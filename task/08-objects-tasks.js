@@ -23,7 +23,12 @@
  *    console.log(r.getArea());   // => 200
  */
 function Rectangle(width, height) {
-    throw new Error('Not implemented');
+    this.width = width;
+    this.height = height;
+}
+
+Rectangle.prototype.getArea = function () {
+    return this.width * this.height;
 }
 
 
@@ -38,7 +43,7 @@ function Rectangle(width, height) {
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
 function getJSON(obj) {
-    throw new Error('Not implemented');
+    return JSON.stringify(obj);
 }
 
 
@@ -54,7 +59,7 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-    throw new Error('Not implemented');
+    return Object.setPrototypeOf(JSON.parse(json), proto);
 }
 
 
@@ -108,33 +113,116 @@ function fromJSON(proto, json) {
 
 const cssSelectorBuilder = {
 
+    errMoreThanOneTime: 'Element, id and pseudo-element should not occur more then one time inside the selector',
+
+    errWrongOrder: 'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
+
+    selector: '',
+
     element: function(value) {
-        throw new Error('Not implemented');
+
+        //Checks
+        var regex = /[#.\[\]:]+/g;
+        if (this.selector !== '' && this.selector[0] !== '#' && this.selector[0] !== '.') {
+            this.selector = '';
+            throw new Error(this.errMoreThanOneTime);
+        }    
+        else if (this.selector !== '' && this.selector.match(regex) !== null) {
+            this.selector = '';
+            throw new Error(this.errWrongOrder);
+        }
+
+        //Creating new object(every element method start separate selector)
+        var obj = Object.create(this);
+        obj.selector = value;
+        return obj;
     },
 
     id: function(value) {
-        throw new Error('Not implemented');
+
+        //Checks
+        var regex = /[.\[\]:]+/g;
+        if (this.selector !== '' && this.selector.indexOf('#') !== -1) {
+            this.selector = '';
+            throw new Error(this.errMoreThanOneTime);
+        }
+        else if (this.selector !== '' && this.selector.match(regex) !== null) {
+            this.selector = '';
+            throw new Error(this.errWrongOrder);
+        }
+
+        //Creating new object if selector is empty(not every id method start separate selector)
+        if (this.selector === '') {
+            var obj = Object.create(this);
+            obj.selector = '#' + value; 
+            return obj;
+        }
+
+        this.selector += '#' + value; 
+        return this;
     },
 
     class: function(value) {
-        throw new Error('Not implemented');
+
+        //Checks
+        var regex = /[\[\]:]+/g;
+        if (this.selector !== '' && this.selector.match(regex) !== null) {
+            this.selector = '';
+            throw new Error(this.errWrongOrder);
+        }      
+
+        this.selector += '.' + value; 
+        return this;
     },
 
     attr: function(value) {
-        throw new Error('Not implemented');
+
+        //Checks
+        var regex = /:+/g;
+        if (this.selector !== '' && this.selector.match(regex) !== null) {
+            this.selector = '';
+            throw new Error(this.errWrongOrder);
+        }    
+
+        this.selector += '[' + value + ']'; 
+        return this;
     },
 
     pseudoClass: function(value) {
-        throw new Error('Not implemented');
+
+        //Checks
+        var regex = /(::)+/g;
+        if (this.selector !== '' && this.selector.match(regex) !== null) {
+            this.selector = '';
+            throw new Error(this.errWrongOrder);
+        }    
+
+        this.selector += ':' + value; 
+        return this;
     },
 
     pseudoElement: function(value) {
-        throw new Error('Not implemented');
+
+        //Checks
+        if (this.selector !== '' && this.selector.indexOf('::') !== -1) {
+            this.selector = '';
+            throw new Error(this.errMoreThanOneTime);
+        }
+
+        this.selector += '::' + value; 
+        return this;
     },
 
     combine: function(selector1, combinator, selector2) {
-        throw new Error('Not implemented');
+        this.selector = selector1.stringify() + ' ' + combinator + ' ' + selector2.stringify();
+        return this;
     },
+
+    stringify: function() {
+        var cssSelector = this.selector;
+        this.selector = '';
+        return cssSelector;
+    }
 };
 
 
