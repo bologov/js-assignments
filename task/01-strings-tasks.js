@@ -230,10 +230,7 @@ function encodeToRot13(str) {
     var result = "";
     const lettersCount = 26;
     return str.replace(/[A-Za-z]/g, function(letter) {
-        if (letter.toUpperCase() >= "N") {
-            return String.fromCharCode((letter.charCodeAt(0) - lettersCount + 13));
-        }
-        return String.fromCharCode((letter.charCodeAt(0) + 13));
+        return String.fromCharCode((letter.charCodeAt(0) + 13 - lettersCount * (letter.toUpperCase() >= "N")));
     });
 }
 

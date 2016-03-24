@@ -331,11 +331,9 @@ function get3TopItems(arr) {
 function getPositivesCount(arr) {
     return arr.reduce((prev, cur) => {
         if (typeof(cur) === 'number' && cur > 0) {
-            return prev + 1;
+            prev += 1;
         }
-        else {
-            return prev;
-        }      
+        return prev;    
    }, 0);
 }
  
@@ -391,12 +389,10 @@ function getItemsSum(arr) {
  */
 function getFalsyValuesCount(arr) {
     return arr.reduce((prev, cur) => {
-        if (Boolean(cur)) {
-            return prev;
+        if (!Boolean(cur)) {
+            prev += 1;
         }
-        else {
-            return prev + 1;
-        }
+        return prev;
     }, 0);
 }
 
