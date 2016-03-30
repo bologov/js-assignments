@@ -49,12 +49,11 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
         return new Array();
     });
 
-    var pos = 0;
-    var path = [];
-    var cur = [];
-    var isPath = false;
-    var i;
-    var j;
+    var pos     = 0;
+    var path    = [];
+    var cur     = [];
+    var isPath  = false;
+    var i, j;
 
     /* Searching for all occurrences of searchStr first letter in puzzle */
     for (let j = 0; j < puzzleHeight; j++) {
@@ -83,6 +82,7 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
         isPath = false;
         j = cur[0];
         i = cur[1];
+
         /* Now we going to check bottom, top, left and right directions of current position
          * The block before && checks if such direction exists
          * Next block checks if this position contains required element(next character in search string)
@@ -116,8 +116,10 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
                 isPath = true;
             }
         }
+
         /* If there were no possible directions */
         if (!isPath) {
+
             /* Now we going through snake backwards and trying to find
              * position with unused alternative routes
              */
@@ -125,10 +127,12 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
                pos--;
                path.pop();
             }
+
             /*If there are no another crossway, return false */
             if (pos < 0) {
                 return false;
             }
+
             /* The situation, when position equals to zero is handled by 
              * code at the beginning of while cycle
              */
@@ -137,12 +141,14 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
                 path.push(cur);
             }
         }
+
         /* If there were possible directions - then move on one of them */
         else {
             pos++;
             cur = possiblePathes[pos].shift();
             path.push(cur);
         }
+
         /* If current position in search string is at the last character
          * of it that means, that string was found in puzzle
          */
@@ -182,9 +188,10 @@ function* getPermutations(chars) {
      * 3rd ster: ba -> cba, bca, bac
      *           ab -> cab, acb, abc
      */
-    var arr = [];
-    var newArr = [];
-    var pos = 0;
+    var arr     = [];
+    var newArr  = [];
+    var pos     = 0;
+
     /* Every char */
     for(let i = 0; i < chars.length; i++) {
         if (!arr.length) {
@@ -193,8 +200,10 @@ function* getPermutations(chars) {
         }
         else {
             newArr = [];
+
             /* For every already existing string */
             for (let j = 0; j < arr.length; j++) {
+
                 /* For every position in these strings */
                 for (let k = 0; k <= arr[0].length; k++) {
                     if (k === 0) {
@@ -208,6 +217,7 @@ function* getPermutations(chars) {
                     newArr.push(arr[j].slice(0, k) + chars[i] + arr[j].slice(k));
                 }
             }
+
             /* Replacing old array with new one */
             arr = newArr;
         }
@@ -243,10 +253,10 @@ function getMostProfitFromStockQuotes(quotes) {
      * first position - we won't buy anything and will 
      * wait for another possibility.
      */
-    var max = Math.max.apply(null, quotes);
-    var items = 0;
+    var max     = Math.max.apply(null, quotes);
+    var items   = 0;
     var outcome = 0;
-    var profit = 0;
+    var profit  = 0;
 
     /* If it is not the max price yet - then buy everything */
     for (let current = 0; current < quotes.length; current++){
@@ -254,6 +264,7 @@ function getMostProfitFromStockQuotes(quotes) {
             outcome += quotes[current];
             items++;
         }
+
         /* If it is the max price - then sell everything */
         if (quotes[current] === max) {
             if (items !== 0)
@@ -262,6 +273,7 @@ function getMostProfitFromStockQuotes(quotes) {
                 outcome = 0;
                 items = 0;
             }
+
             /* Find next max value in stock quotes */
             max = Math.max.apply(null, quotes.slice(current + 1));
         }
@@ -286,6 +298,16 @@ function getMostProfitFromStockQuotes(quotes) {
  * 
  */
 function UrlShortener() {
+    /* The idea of this solution is that there 84
+     * allowed symbols and each of them can be represented
+     * with 7 bits. Besides, one Unicode character has 16 bits
+     * length, so we can store two allowed characters in one
+     * Unicode character. 
+     *
+     * Also, every url begins with 'https://', so we can
+     * just cut it from url during encode, and add it to
+     * result during decode.
+     */
     this.urlAllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"+
                            "abcdefghijklmnopqrstuvwxyz"+
                            "0123456789-_.~!*'();:@&=+$,/?#[]";
@@ -294,11 +316,48 @@ function UrlShortener() {
 UrlShortener.prototype = {
 
     encode: function(url) {
-        throw new Error('Not implemented');
+        var char1 = 0;
+        var char2 = 0;
+        var result = '';
+
+        /* Start from eigth position to omit 'https://' and take two characters at a time */ 
+        for (let pos = 8; pos < url.length; pos += 2) {
+            char1 = this.urlAllowedChars.indexOf(url[pos]);
+
+            /* There are no second character maybe */
+            if (pos + 1 < url.length) {
+                char2 = this.urlAllowedChars.indexOf(url[pos + 1]) << 7;
+                
+            }
+            else {
+
+                /* In this case we'll give to our number value, that is not present in allowed list*/
+                char2 = 100 << 7;
+            }
+            result += String.fromCharCode(char1 | char2);
+        }
+        return result;
     },
     
     decode: function(code) {
-        throw new Error('Not implemented');
+        var result = 'https://';
+        var char1 = 0;
+        var char2 = 0;
+        var symbol = 0;
+
+        for (let i = 0; i < code.length; i++) {
+            /* Extracting numbers from Unicode character and searching appropriate values in list*/
+            symbol = code[i].charCodeAt();
+            char1 = this.urlAllowedChars[symbol & 0x7F];
+            char2 = this.urlAllowedChars[symbol >> 7 & 0x7F];
+
+            /* There are no character with such number in list maybe */
+            if (char2 === undefined) {
+                char2 = '';
+            }
+            result += char1 + char2;
+        }
+        return result;
     } 
 }
 
