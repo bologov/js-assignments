@@ -129,7 +129,7 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
             if (pos < 0) {
                 return false;
             }
-            /* The cituation, when position equals to zero is handled by 
+            /* The situation, when position equals to zero is handled by 
              * code at the beginning of while cycle
              */
             else if (pos !== 0){
