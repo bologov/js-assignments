@@ -119,20 +119,28 @@ const cssSelectorBuilder = {
 
     selector: '',
 
-    element: function(value) {
-
-        //Checks
-        var regex = /[#.\[\]:]+/g;
-        if (this.selector !== '' && this.selector[0] !== '#' && this.selector[0] !== '.') {
-            this.selector = '';
-            throw new Error(this.errMoreThanOneTime);
-        }    
-        else if (this.selector !== '' && this.selector.match(regex) !== null) {
+    orderCheck: function(regex) {
+        if (this.selector.match(regex) !== null) {
             this.selector = '';
             throw new Error(this.errWrongOrder);
-        }
+        } 
+    },
 
-        //Creating new object(every element method start separate selector)
+    timesCheck: function(elem) {
+        if (this.selector.indexOf(elem) !== -1) {
+            this.selector = '';
+            throw new Error(this.errMoreThanOneTime);
+        }
+    },
+
+    element: function(value) {
+
+        if (this.selector !== '') {
+            throw new Error(this.errMoreThanOneTime);
+        }
+        this.orderCheck(/[#.\[\]:]+/);
+
+        //Creating new object(every element method starts separate selector)
         var obj = Object.create(this);
         obj.selector = value;
         return obj;
@@ -140,18 +148,10 @@ const cssSelectorBuilder = {
 
     id: function(value) {
 
-        //Checks
-        var regex = /[.\[\]:]+/g;
-        if (this.selector !== '' && this.selector.indexOf('#') !== -1) {
-            this.selector = '';
-            throw new Error(this.errMoreThanOneTime);
-        }
-        else if (this.selector !== '' && this.selector.match(regex) !== null) {
-            this.selector = '';
-            throw new Error(this.errWrongOrder);
-        }
+        this.timesCheck('#');
+        this.orderCheck(/[.\[\]:]+/);
 
-        //Creating new object if selector is empty(not every id method start separate selector)
+        //Creating new object if selector is empty(not every id method starts separate selector)
         if (this.selector === '') {
             var obj = Object.create(this);
             obj.selector = '#' + value; 
@@ -164,12 +164,7 @@ const cssSelectorBuilder = {
 
     class: function(value) {
 
-        //Checks
-        var regex = /[\[\]:]+/g;
-        if (this.selector !== '' && this.selector.match(regex) !== null) {
-            this.selector = '';
-            throw new Error(this.errWrongOrder);
-        }      
+        this.orderCheck(/[\[\]:]+/);    
 
         this.selector += '.' + value; 
         return this;
@@ -177,12 +172,7 @@ const cssSelectorBuilder = {
 
     attr: function(value) {
 
-        //Checks
-        var regex = /:+/g;
-        if (this.selector !== '' && this.selector.match(regex) !== null) {
-            this.selector = '';
-            throw new Error(this.errWrongOrder);
-        }    
+        this.orderCheck(/:+/);   
 
         this.selector += '[' + value + ']'; 
         return this;
@@ -190,12 +180,7 @@ const cssSelectorBuilder = {
 
     pseudoClass: function(value) {
 
-        //Checks
-        var regex = /(::)+/g;
-        if (this.selector !== '' && this.selector.match(regex) !== null) {
-            this.selector = '';
-            throw new Error(this.errWrongOrder);
-        }    
+        this.orderCheck(/(::)+/);   
 
         this.selector += ':' + value; 
         return this;
@@ -203,11 +188,7 @@ const cssSelectorBuilder = {
 
     pseudoElement: function(value) {
 
-        //Checks
-        if (this.selector !== '' && this.selector.indexOf('::') !== -1) {
-            this.selector = '';
-            throw new Error(this.errMoreThanOneTime);
-        }
+        this.timesCheck('::');
 
         this.selector += '::' + value; 
         return this;

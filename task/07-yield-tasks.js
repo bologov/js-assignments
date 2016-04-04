@@ -116,9 +116,11 @@ function* depthTraversalTree(root) {
 
         if ('children' in root) {
             substack = [];
+
             for (let childNode of root.children) {
                 substack.push(childNode);
             }
+
             stack = substack.concat(stack);
         }
 
@@ -154,9 +156,11 @@ function* breadthTraversalTree(root) {
     while (root != undefined) {
 
         if ('children' in root) {
+
             for (let childNode of root.children) {
                 stack.push(childNode);
             }
+
         }
 
         yield root;
@@ -193,7 +197,7 @@ function* mergeSortedSequences(source1, source2) {
             yield val2.value;
             yield* source2;
         }
-        if (val2.done) {
+        else if (val2.done) {
             yield val1.value;
             yield* source1;
         }

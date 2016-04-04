@@ -162,30 +162,38 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
+
     return function() {
         var str = func.name + '(';
         var argstr = '';
         var callingResult;
 
         for (let i = 0; i < arguments.length; i++) {
+
             if (Array.isArray(arguments[i])) {
                 argstr += '[' + arguments[i] + ']';
-            }
-            else {
+            } else {
                 argstr += arguments[i];
             }
+            
             if (i < arguments.length - 1) {
                 argstr += ',';
             }
         }
+
+        //adding quotes to strings
         argstr = argstr.replace(/[A-Za-z]+/g, '"$&"');
         str += argstr + ')';
 
         logFunc(str + ' starts');
+
         callingResult = func.apply(this, arguments);
+
         logFunc(str + ' ends');
+
         return callingResult;
     }
+
 }
 
 
@@ -203,12 +211,11 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn) {
-    var args = (arguments.length === 1 ? [arguments[0]] : Array.apply(null, arguments));
+    var args = Array.apply(null, arguments);
 
     return function() { 
-        var inArgs = (arguments.length === 1 ? [arguments[0]] : Array.apply(null, arguments));
-
-        return fn.apply(this, args.slice(1).concat(inArgs));
+        var inArgs =  Array.apply(null, arguments);
+        return fn.apply(null, args.slice(1).concat(inArgs));
     }
 }
 

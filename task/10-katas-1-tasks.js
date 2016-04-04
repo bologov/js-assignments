@@ -58,7 +58,6 @@ function createCompassPoints() {
 
             /* Azimuth equals to multiplication of absolute point number with degrees per point*/
             azimuth = (point + cardinal * pointsPerCardinal) * azimuthPerPoint;
-
             compass.push({abbreviation: abbr, azimuth: azimuth});
         }
 

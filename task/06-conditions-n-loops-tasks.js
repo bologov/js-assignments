@@ -185,22 +185,12 @@ function isInsideCircle(circle, point) {
  */
 function findFirstSingleChar(str) {
     var char = "";
-    var isSingle = true;
 
     for (let i = 0; i < str.length; i++) {
         char = str[i];
-        isSingle = true;
 
-        for (let j = 0; j < str.length; j++) {
-
-            if (i !== j && str[j] === char) {
-                isSingle = false;
-                break;
-            }
-
-        }
-
-        if (isSingle) {
+        if (str.indexOf(char) === str.lastIndexOf(char))
+        {
             return char;
         }
     }
@@ -261,13 +251,14 @@ function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
  * 'noon' => 'noon'
  */
 function reverseString(str) {
-    var newstr = "";
+    // var newstr = "";
 
-    for (let i = str.length - 1; i >= 0; i--) {
-        newstr += str[i];
-    }
+    // for (let i = str.length - 1; i >= 0; i--) {
+    //     newstr += str[i];
+    // }
 
-    return newstr;
+    // return newstr;
+    return str.split('').reverse().join('');
 }
 
 
@@ -284,17 +275,18 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-    var length = num.toString().length;
-    var digit = 0;
-    var result = 0;
+    // var length = num.toString().length;
+    // var digit = 0;
+    // var result = 0;
 
-    for (let i = 1; i <= length; i++) {
-        digit = num % 10;    
-        num = (num - digit) / 10;
-        result += Math.pow(10, length - i) * digit;
-    }
+    // for (let i = 1; i <= length; i++) {
+    //     digit = num % 10;    
+    //     num = (num - digit) / 10;
+    //     result += Math.pow(10, length - i) * digit;
+    // }
 
-    return result;
+    // return result;
+    return num.toString().split('').reverse().join('');
 }
 
 
@@ -363,7 +355,7 @@ function getDigitalRoot(num) {
     var digit = 0;
     var result = num;
 
-    do {   
+    while (result > biggestDigit) {
         num = result;
         length = result.toString().length;
         result = 0;
@@ -374,8 +366,7 @@ function getDigitalRoot(num) {
             result += digit;
         }
     }
-    while (result > biggestDigit)
-
+    
     return result;
 }
 
@@ -464,7 +455,7 @@ function timespanToHumanString(startDate, endDate) {
     const hourInDay = 24;
     const dayInMonth = 30;
     const dayInYear = 365;
-    const smallestTime = 2;
+    const smallestAmount = 2;
 
     var time = endDate.getTime() - startDate.getTime();
     var timeUnit = "";
@@ -473,7 +464,9 @@ function timespanToHumanString(startDate, endDate) {
 
     while (time != 0) {
 
+        //Get seconds
         time /= milliInSec;
+
         if (time > 0 && time <= 45) {    
             number = "a few";
             timeUnit = "seconds";
@@ -485,10 +478,11 @@ function timespanToHumanString(startDate, endDate) {
             break;
         }
 
-
+        //Get minutes
         time /= secInMin;
+
         if (Math.round(time) >= 2 &&  time <= 45) {          
-            number = smallestTime;
+            number = smallestAmount;
             roundTime = Math.floor(time);
             if (number < roundTime) {
                 number = roundTime;
@@ -502,9 +496,11 @@ function timespanToHumanString(startDate, endDate) {
             break;
         }
 
+        //Get hours
         time /= minInHour;
+
         if (Math.round(time) >= 2 &&  time <= 22) {
-            number = smallestTime;
+            number = smallestAmount;
             roundTime = Math.floor(time);
             if (number < roundTime) {
                 if (time % 1 > 0.5) {
@@ -523,9 +519,11 @@ function timespanToHumanString(startDate, endDate) {
             break;
         }
 
-        time /= hourInDay;    
+        //Get days
+        time /= hourInDay; 
+
         if (time <= 25) {
-            number = smallestTime;
+            number = smallestAmount;
             roundTime = Math.floor(time);
             if (number < roundTime) {
                 if (time % 1 > 0.5) {
@@ -544,7 +542,7 @@ function timespanToHumanString(startDate, endDate) {
             break;
         }
         else if (time <= 345) {
-            number = smallestTime;
+            number = smallestAmount;
             roundTime = Math.round(time / dayInMonth);      
             if (number < roundTime) {
                 number = roundTime;
@@ -558,7 +556,7 @@ function timespanToHumanString(startDate, endDate) {
             break;
         }
         else {
-            number = smallestTime;
+            number = smallestAmount;
             roundTime = Math.round(time / dayInYear);
             if (number < roundTime) {
                 number = roundTime;
@@ -591,17 +589,18 @@ function timespanToHumanString(startDate, endDate) {
  *    365, 10 => '365'
  */
 function toNaryString(num, n) {
-    var str = "";
-    var remainder = 0;
+    // var str = "";
+    // var remainder = 0;
 
-    while (num >= n)
-    {
-        remainder = num % n;
-        str = remainder + str;
-        num = (num - remainder) / n; 
-    }
+    // while (num >= n)
+    // {
+    //     remainder = num % n;
+    //     str = remainder + str;
+    //     num = (num - remainder) / n; 
+    // }
 
-    return num + str;
+    // return num + str;
+    return num.toString(n);
 }
 
 
@@ -716,10 +715,6 @@ function evaluateTicTacToePosition(position) {
     for (let i = 0; i < areaSize; i++) {
         isWinner = true;
         char = position[i][0];
-        if (char === undefined) {
-            isWinner = false;
-            continue;
-        }
         for (let j = 1; j < areaSize; j++) {
             if (char !== position[i][j] || char === undefined) {
                 isWinner = false;
@@ -735,10 +730,6 @@ function evaluateTicTacToePosition(position) {
     for (let j = 0; j < areaSize; j++) {
         isWinner = true;
         char = position[0][j];
-        if (char === undefined) {
-            isWinner = false;
-            continue;
-        }
         for (let i = 1; i < areaSize; i++) {
             if (char !== position[i][j] || char === undefined) {
                 isWinner = false;
@@ -753,9 +744,6 @@ function evaluateTicTacToePosition(position) {
     //Diagonal check
     char = position[0][0];
     isWinner = true;
-    if (char === undefined) {
-        isWinner = false;
-    }
     for (let i = 1; i < areaSize; i++) {
         if (char !== position[i][i] || char === undefined) {
             isWinner = false;
@@ -770,9 +758,6 @@ function evaluateTicTacToePosition(position) {
     //Antidiagonal check
     char = position[0][areaSize - 1];
     isWinner = true;
-    if (char === undefined) {
-        isWinner = false;
-    }
     for (let i = 1; i < areaSize; i++) {
         if (char !== position[i][areaSize - 1 - i] || char === undefined) {
             isWinner = false;
