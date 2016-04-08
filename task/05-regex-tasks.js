@@ -54,7 +54,7 @@ function getRegexForGuid() {
  *
  */
 function getRegexForPitSpot() {
-    return /^[sr]|p(?=i)/;
+	return /p[\w ]t/;
 }
 
 
