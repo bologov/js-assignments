@@ -46,7 +46,7 @@ function parseBankAccount(bankAccount) {
     const stringsNum = 3;
     const charPerDigit = 3;
 
-    var representation =    ' _     _  _     _  _  _  _  _ \n'+
+    let representation =    ' _     _  _     _  _  _  _  _ \n'+
                             '| |  | _| _||_||_ |_   ||_||_|\n'+
                             '|_|  ||_  _|  | _||_|  ||_| _|\n';
 
@@ -54,11 +54,11 @@ function parseBankAccount(bankAccount) {
     representation = representation.split('\n');
     bankAccount = bankAccount.split('\n');
     
-    var accLength = bankAccount[0].length;
-    var result = '';
-    var str = '';
+    let accLength = bankAccount[0].length;
+    let result = '';
+    let str = '';
 
-    var digits = [];
+    let digits = [];
 
     /* Making base of digits, where position equals to digit value */
     for (let basePos = 0; basePos < digitsNumber; basePos++) {
@@ -116,8 +116,8 @@ function* wrapText(text, columns) {
      * string will be yilded, and word will be added to
      * empty string.
      */
-    var outputString = '';
-    var word = '';
+    let outputString = '';
+    let word = '';
 
     while (text) {
         /* Taking word out of the text and checking existence of other words */
@@ -195,13 +195,13 @@ function getPokerHandRank(hand) {
     const cardsAceHighest = "234567891JQKA"; //Ace has highest rank
     const suits = "♣♦♥♠";
     
-    var sameArr = [];
-    var usedCards = [];
-    var sameCount = 0;
+    let sameArr = [];
+    let usedCards = [];
+    let sameCount = 0;
 
-    var isAceThere;
-    var isStraight = false;
-    var isSame = false;
+    let isAceThere;
+    let isStraight = false;
+    let isSame = false;
     
     /* Ace presence check */
     isAceThere = hand.reduce((prev, cur) => {
@@ -369,13 +369,13 @@ function* getFigureRectangles(figure) {
      * should end with another plus. In this case we
      * will have a rectangular found;
      */
-    var arr = figure.split('\n');
-    var plusArr = [];
-    var rectangles = [];
-    var nextPlus = 0;
-    var width = 0;
-    var height = 0;
-    var i, j, i2;
+    let arr = figure.split('\n');
+    let plusArr = [];
+    let rectangles = [];
+    let nextPlus = 0;
+    let width = 0;
+    let height = 0;
+    let i, j, i2;
 
     /* Finding pluses */
     for (let j = 0; j < arr.length; j++) {

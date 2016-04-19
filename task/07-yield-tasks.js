@@ -33,8 +33,8 @@
  *
  */
 function* get99BottlesOfBeer() {
-    var num = 99;
-    var s = "s";
+    let num = 99;
+    let s = "s";
     while (num !== "no more")
     {
         yield `${num} bottle${s} of beer on the wall, ${num} bottle${s} of beer.`;
@@ -65,9 +65,9 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-    var fnum1 = 0;
-    var fnum2 = 1;
-    var cur;
+    let fnum1 = 0;
+    let fnum2 = 1;
+    let cur;
     
     while (true) {
         cur = fnum1;
@@ -89,7 +89,7 @@ function* getFibonacciSequence() {
  * @return {Iterable.<object>} the sequence of all tree nodes in depth-first order
  * @example
  *
- *   var node1 = { n:1 }, node2 = { n:2 }, node3 = { n:3 }, node4 = { n:4 },
+ *   let node1 = { n:1 }, node2 = { n:2 }, node3 = { n:3 }, node4 = { n:4 },
  *       node5 = { n:5 }, node6 = { n:6 }, node7 = { n:7 }, node8 = { n:8 };
  *   node1.children = [ node2, node6, node7 ];
  *   node2.children = [ node3, node4 ];
@@ -109,8 +109,8 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
-    var stack = [];
-    var substack = [];
+    let stack = [];
+    let substack = [];
 
     while (root != undefined) {
 
@@ -151,7 +151,7 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    var stack = [];
+    let stack = [];
 
     while (root != undefined) {
 
@@ -186,7 +186,7 @@ function* mergeSortedSequences(source1, source2) {
     var source1 = source1();
     var source2 = source2();
 
-    var val1, val2;
+    let val1, val2;
 
     while (true) {
 

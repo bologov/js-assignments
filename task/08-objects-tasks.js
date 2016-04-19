@@ -17,7 +17,7 @@
  * @return {Object}
  *
  * @example
- *    var r = new Rectangle(10,20);
+ *    let r = new Rectangle(10,20);
  *    console.log(r.width);       // => 10
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
@@ -55,7 +55,7 @@ function getJSON(obj) {
  * @return {object}
  *
  * @example
- *    var r = fromJSON(Rectangle.prototype, '{"width":10, "height":20}');
+ *    let r = fromJSON(Rectangle.prototype, '{"width":10, "height":20}');
  *
  */
 function fromJSON(proto, json) {
@@ -88,7 +88,7 @@ function fromJSON(proto, json) {
  *
  * @example
  *
- *  var builder = cssSelectorBuilder;
+ *  let builder = cssSelectorBuilder;
  *
  *  builder.id('main').class('container').class('editable').stringify()  => '#main.container.editable'
  *
@@ -141,7 +141,7 @@ const cssSelectorBuilder = {
         this.orderCheck(/[#.\[\]:]+/);
 
         //Creating new object(every element method starts separate selector)
-        var obj = Object.create(this);
+        let obj = Object.create(this);
         obj.selector = value;
         return obj;
     },
@@ -153,7 +153,7 @@ const cssSelectorBuilder = {
 
         //Creating new object if selector is empty(not every id method starts separate selector)
         if (this.selector === '') {
-            var obj = Object.create(this);
+            let obj = Object.create(this);
             obj.selector = '#' + value; 
             return obj;
         }
@@ -200,7 +200,7 @@ const cssSelectorBuilder = {
     },
 
     stringify: function() {
-        var cssSelector = this.selector;
+        let cssSelector = this.selector;
         this.selector = '';
         return cssSelector;
     }

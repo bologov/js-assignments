@@ -10,7 +10,7 @@
  * @return {bool}
  *
  * @example
- *   var puzzle = [ 
+ *   let puzzle = [ 
  *      'ANGULAR',
  *      'REDNCAE',
  *      'RFIDTCL',
@@ -45,15 +45,15 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
     const puzzleWidth = puzzle[0].length;
     const puzzleHeight = puzzle.length;
 
-    var possiblePathes = new Array(searchStr.length).fill(0).map(() => {
+    let possiblePathes = new Array(searchStr.length).fill(0).map(() => {
         return new Array();
     });
 
-    var pos     = 0;
-    var path    = [];
-    var cur     = [];
-    var isPath  = false;
-    var i, j;
+    let pos     = 0;
+    let path    = [];
+    let cur     = [];
+    let isPath  = false;
+    let i, j;
 
     /* Searching for all occurrences of searchStr first letter in puzzle */
     for (let j = 0; j < puzzleHeight; j++) {
@@ -188,9 +188,9 @@ function* getPermutations(chars) {
      * 3rd ster: ba -> cba, bca, bac
      *           ab -> cab, acb, abc
      */
-    var arr     = [];
-    var newArr  = [];
-    var pos     = 0;
+    let arr     = [];
+    let newArr  = [];
+    let pos     = 0;
 
     /* Every char */
     for(let i = 0; i < chars.length; i++) {
@@ -253,10 +253,10 @@ function getMostProfitFromStockQuotes(quotes) {
      * first position - we won't buy anything and will 
      * wait for another possibility.
      */
-    var max     = Math.max.apply(null, quotes);
-    var items   = 0;
-    var outcome = 0;
-    var profit  = 0;
+    let max     = Math.max.apply(null, quotes);
+    let items   = 0;
+    let outcome = 0;
+    let profit  = 0;
 
     /* If it is not the max price yet - then buy everything */
     for (let current = 0; current < quotes.length; current++){
@@ -292,9 +292,9 @@ function getMostProfitFromStockQuotes(quotes) {
  *
  * @example
  *    
- *     var urlShortener = new UrlShortener();
- *     var shortLink = urlShortener.encode('https://en.wikipedia.org/wiki/URL_shortening');
- *     var original  = urlShortener.decode(shortLink); // => 'https://en.wikipedia.org/wiki/URL_shortening'
+ *     let urlShortener = new UrlShortener();
+ *     let shortLink = urlShortener.encode('https://en.wikipedia.org/wiki/URL_shortening');
+ *     let original  = urlShortener.decode(shortLink); // => 'https://en.wikipedia.org/wiki/URL_shortening'
  * 
  */
 function UrlShortener() {
@@ -316,9 +316,9 @@ function UrlShortener() {
 UrlShortener.prototype = {
 
     encode: function(url) {
-        var char1 = 0;
-        var char2 = 0;
-        var result = '';
+        let char1 = 0;
+        let char2 = 0;
+        let result = '';
 
         /* Start from eigth position to omit 'https://' and take two characters at a time */ 
         for (let pos = 8; pos < url.length; pos += 2) {
@@ -340,10 +340,10 @@ UrlShortener.prototype = {
     },
     
     decode: function(code) {
-        var result = 'https://';
-        var char1 = 0;
-        var char2 = 0;
-        var symbol = 0;
+        let result = 'https://';
+        let char1 = 0;
+        let char2 = 0;
+        let symbol = 0;
 
         for (let i = 0; i < code.length; i++) {
             /* Extracting numbers from Unicode character and searching appropriate values in list*/

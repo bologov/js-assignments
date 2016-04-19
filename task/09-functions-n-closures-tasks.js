@@ -39,11 +39,11 @@ function getComposition(f,g) {
  * @return {Function}
  *
  * @example
- *   var power2 = getPowerFunction(2); // => x^2
+ *   let power2 = getPowerFunction(2); // => x^2
  *   power2(2) => 4
  *   power2(4) => 16
  *
- *   var power05 = getPowerFunction(0.5); // => x^0.5
+ *   let power05 = getPowerFunction(0.5); // => x^0.5
  *   power05(4) => 2
  *   power05(16) => 4
  *
@@ -70,7 +70,7 @@ function getPowerFunction(exponent) {
  */
 function getPolynom() {
     return x => {
-        var result = 0;
+        let result = 0;
 
         for (let i = 0; i < arguments.length; i++) {
             result += arguments[i] * Math.pow(x, arguments.length - 1 - i);
@@ -89,14 +89,14 @@ function getPolynom() {
  * @return {Function} memoized function
  *
  * @example
- *   var memoizer = memoize(() => Math.random());
+ *   let memoizer = memoize(() => Math.random());
  *   memoizer() => some random number  (first run, evaluates the result of Math.random())
  *   memoizer() => the same random number  (second run, returns the previous cached result)
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
 function memoize(func) {
-    var cache;
+    let cache;
 
     return x => {
         if (cache === undefined) {
@@ -116,14 +116,14 @@ function memoize(func) {
  * @return {Function}
  *
  * @example
- * var attempt = 0, retryer = retry(() => {
+ * let attempt = 0, retryer = retry(() => {
  *      if (++attempt % 2) throw new Error('test');
  *      else return attempt;
  * }, 2);
  * retryer() => 2
  */
 function retry(func, attempts) {
-    var times = 0;
+    let times = 0;
     return () => {
         while (times <= attempts) {
             try {
@@ -153,8 +153,8 @@ function retry(func, attempts) {
  *
  * @example
  *
- * var cosLogger = logger(Math.cos, console.log);
- * var result = cosLogger(Math.PI));     // -1
+ * let cosLogger = logger(Math.cos, console.log);
+ * let result = cosLogger(Math.PI));     // -1
  *
  * log from console.log:
  * cos(3.141592653589793) starts
@@ -164,9 +164,9 @@ function retry(func, attempts) {
 function logger(func, logFunc) {
 
     return function() {
-        var str = func.name + '(';
-        var argstr = '';
-        var callingResult;
+        let str = func.name + '(';
+        let argstr = '';
+        let callingResult;
 
         for (let i = 0; i < arguments.length; i++) {
 
@@ -204,17 +204,17 @@ function logger(func, logFunc) {
  * @return {Function}
  *
  * @example
- *   var fn = function(x1,x2,x3,x4) { return  x1 + x2 + x3 + x4; };
+ *   let fn = function(x1,x2,x3,x4) { return  x1 + x2 + x3 + x4; };
  *   partialUsingArguments(fn, 'a')('b','c','d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b')('c','d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn) {
-    var args = Array.apply(null, arguments);
+    let args = Array.apply(null, arguments);
 
     return function() { 
-        var inArgs =  Array.apply(null, arguments);
+        let inArgs =  Array.apply(null, arguments);
         return fn.apply(null, args.slice(1).concat(inArgs));
     }
 }
@@ -227,8 +227,8 @@ function partialUsingArguments(fn) {
  * @return {Function}
  *
  * @example
- *   var getId4 = getIdGenerator(4);
- *   var getId10 = gerIdGenerator(10);
+ *   let getId4 = getIdGenerator(4);
+ *   let getId10 = gerIdGenerator(10);
  *   getId4() => 4
  *   getId10() => 10
  *   getId4() => 5
@@ -237,7 +237,7 @@ function partialUsingArguments(fn) {
  *   getId10() => 11
  */
 function getIdGeneratorFunction(startFrom) {
-    var curId = startFrom;
+    let curId = startFrom;
     
     return () => {
         return curId++;

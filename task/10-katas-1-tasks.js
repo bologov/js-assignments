@@ -26,12 +26,12 @@ function createCompassPoints() {
     const cardinalsNum      = 4;
 
 
-    var azimuth = 0;
-    var compass = [];
-    var sides = ['N','E','S','W'];  // use array of cardinal directions only!
-    var cur, next, half;
-    var abbr = '';
-    var first, second;
+    let azimuth = 0;
+    let compass = [];
+    let sides = ['N','E','S','W'];  // use array of cardinal directions only!
+    let cur, next, half;
+    let abbr = '';
+    let first, second;
 
     for (let cardinal = 0; cardinal < cardinalsNum; cardinal++) {
         cur = sides[cardinal];
@@ -109,54 +109,54 @@ function* expandBraces(str) {
      * It's items will replace brackets in copies of given string and
      * those strings will pushed to the end of list.
      */
-    var variants    = [];
-    var stack       = [];
-    var items       = [];
-    var pos         = 0;
-    var begin       = 0;
-    var end         = 0;
-    var isBraces    = false;
-    var newstr      = '';
+    let letiants    = [];
+    let stack       = [];
+    let items       = [];
+    let pos         = 0;
+    let begin       = 0;
+    let end         = 0;
+    let isBraces    = false;
+    let newstr      = '';
 
-    /* Pushing given string in variants array */
-    variants.push(str);
+    /* Pushing given string in letiants array */
+    letiants.push(str);
 
     while (true) {
         isBraces = false;
 
         /* For first string in result array */
-        for (let i = 0; i < variants[0].length; i++) {
+        for (let i = 0; i < letiants[0].length; i++) {
 
             /* Opening bracket found */
-            if (variants[0][i] === '{') {
+            if (letiants[0][i] === '{') {
                 isBraces = true;
                 stack.push(i);
             }
 
             /* Closing bracket found */
-            if (variants[0][i] === '}') {
+            if (letiants[0][i] === '}') {
                 begin = stack.pop();
                 end = i;
 
                 /* Items inside of pair of brackets are separated with commas*/
-                items = variants[0].slice(begin + 1, end).split(',');
+                items = letiants[0].slice(begin + 1, end).split(',');
 
                 /* For every item in found pair*/
-                for (let variant = 0; variant < items.length; variant++) {
+                for (let letiant = 0; letiant < items.length; letiant++) {
 
                     /* Replacing pair of brackets with one of items containing in it*/
-                    newstr = variants[0].slice(0, begin) + items[variant] + variants[0].slice(end + 1);
+                    newstr = letiants[0].slice(0, begin) + items[letiant] + letiants[0].slice(end + 1);
 
                     /* Check to avoide duplication when nested pairs are present */
-                     if (variants.indexOf(newstr) === -1) {
+                     if (letiants.indexOf(newstr) === -1) {
 
                         /* New strings pushed to the end of array*/
-                        variants.push(newstr);
+                        letiants.push(newstr);
                     }     
                 }
 
                 /* String with found pair of brackets gets removed from the start */
-                variants.shift();
+                letiants.shift();
                 stack = [];
                 break;
             }
@@ -166,8 +166,8 @@ function* expandBraces(str) {
         }
     }
 
-    while (pos < variants.length) {
-        yield variants[pos++];
+    while (pos < letiants.length) {
+        yield letiants[pos++];
     }
 }
 
@@ -207,14 +207,14 @@ function getZigZagMatrix(n) {
      * At the very first step direction is considered
      * to be right(->);
      */
-    var posX        = 0;
-    var posY        = 0;
-    var filler      = 0;
-    var goingLeft   = false;
-    var xChange  = 0;
-    var yChange  = 0;
+    let posX        = 0;
+    let posY        = 0;
+    let filler      = 0;
+    let goingLeft   = false;
+    let xChange  = 0;
+    let yChange  = 0;
 
-    var matrix = new Array(n).fill(0).map(() => {
+    let matrix = new Array(n).fill(0).map(() => {
         return new Array(n).fill(0);
     });
 
@@ -297,7 +297,7 @@ function canDominoesMakeRow(dominoes) {
      * same dominoe) should be considered as start and end 
      * of the row and they do not participate in numbers counting.
      *
-     * We should check all variants with various numbers excluded.
+     * We should check all letiants with letious numbers excluded.
      *
      * The problem is dominoes with same numbers on both side. If such
      * dominoe is used the count of it's number in given string 
@@ -305,13 +305,13 @@ function canDominoesMakeRow(dominoes) {
      * used for either start or end.
      */
     const dominoeDigitsNum = 7;
-    var digits = new Array(dominoeDigitsNum).fill(0);
-    var isSame = new Array(dominoeDigitsNum).fill(0);
+    let digits = new Array(dominoeDigitsNum).fill(0);
+    let isSame = new Array(dominoeDigitsNum).fill(0);
 
-    var dominoesGiven   = dominoes.length;
-    var dominoesStr     = '';
-    var isFound         = false;
-    var i, j;
+    let dominoesGiven   = dominoes.length;
+    let dominoesStr     = '';
+    let isFound         = false;
+    let i, j;
     
     /* Making dominoes string */
     for (let x = 0; x < dominoesGiven; x++) {
@@ -406,9 +406,9 @@ function extractRanges(nums) {
      * an separate values. After that, element from array
      * will be pushed to the empty sequence.
      */
-    var result = "";
-    var currentSequence = [];
-    var position = 0;
+    let result = "";
+    let currentSequence = [];
+    let position = 0;
 
     while(position < nums.length) {
 

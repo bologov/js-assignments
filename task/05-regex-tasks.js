@@ -31,7 +31,7 @@
  * @return {RegExp}
  */
 function getRegexForGuid() {
-    var hex = '[\\da-f]';
+    let hex = '[\\da-f]';
     return new RegExp(`{${hex}{8}-${hex}{4}-${hex}{4}-${hex}{4}-${hex}{12}}`, 'i');
 }
 
@@ -73,7 +73,7 @@ function getRegexForPitSpot() {
  * @return {RegExp}
  */
 function getRegexForIPv4() {
-    var ipNum = '\\d{1,3}';
+    let ipNum = '\\d{1,3}';
     return new RegExp(`^(?!.*(25[6-9]|2[6-9]\\d|[3-9]\\d{2}))${ipNum}\\.${ipNum}\\.${ipNum}\\.${ipNum}$`);
 }
 

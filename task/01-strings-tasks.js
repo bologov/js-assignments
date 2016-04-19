@@ -201,7 +201,7 @@ function extractEmails(str) {
  *
  */
 function getRectangleString(width, height) {
-    var topSide = "┌", bottomSide = "└", filler = "│";
+    let topSide = "┌", bottomSide = "└", filler = "│";
 
     topSide = topSide.concat("─".repeat(width - 2), "┐", "\n");
     bottomSide = bottomSide.concat("─".repeat(width - 2), "┘", "\n");
@@ -227,7 +227,7 @@ function getRectangleString(width, height) {
  *
  */
 function encodeToRot13(str) {
-    var result = "";
+    let result = "";
     const lettersCount = 26;
     return str.replace(/[A-Za-z]/g, function(letter) {
         return String.fromCharCode((letter.charCodeAt(0) + 13 - lettersCount * (letter.toUpperCase() >= "N")));
@@ -277,8 +277,8 @@ function isString(value) {
  *   'K♠' => 51
  */
 function getCardId(value) {
-    var card = "A234567891JQK";
-    var suit = "♣♦♥♠";
+    let card = "A234567891JQK";
+    let suit = "♣♦♥♠";
     return card.indexOf(value[0]) + suit.indexOf(value[value.length - 1]) * 13;
 }
 

@@ -351,7 +351,7 @@ function getPositivesCount(arr) {
  *   [ 'one','one','one','zero' ]     => [ 'zero','one','one','one' ]
  */
 function sortDigitNamesByNumericOrder(arr) {
-    var  digitsArr = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+    let  digitsArr = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
     return arr.sort((a, b) => {
         return digitsArr.indexOf(a) - digitsArr.indexOf(b);
     });
@@ -485,7 +485,7 @@ function sortCitiesArray(arr) {
  *           [0,0,0,0,1]]   
  */
 function getIdentityMatrix(n) {
-    var matrix = new Array(n).fill(0).map(() => {
+    let matrix = new Array(n).fill(0).map(() => {
         return new Array(n).fill(0);
     });
 
@@ -563,7 +563,7 @@ function distinct(arr) {
  *   }
  */
 function group(array, keySelector, valueSelector) {
-    var map = new Map();
+    let map = new Map();
 
     array.map(cur => {
         if (map.has(keySelector(cur))) {

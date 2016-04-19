@@ -30,7 +30,7 @@
  *
  */
 function getFizzBuzz(num) {
-    var result = "";
+    let result = "";
     if (num % 3 === 0) {
         result += 'Fizz';
     }
@@ -73,7 +73,7 @@ function getFactorial(n) {
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
 function getSumBetweenNumbers(n1, n2) {
-    var result = 0;
+    let result = 0;
     for (let i = n1; i <= n2; i++) {
         result += i;
     }
@@ -184,7 +184,7 @@ function isInsideCircle(circle, point) {
  *   'entente' => null
  */
 function findFirstSingleChar(str) {
-    var char = "";
+    let char = "";
 
     for (let i = 0; i < str.length; i++) {
         char = str[i];
@@ -221,7 +221,7 @@ function findFirstSingleChar(str) {
  *
  */
 function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
-    var result = "";
+    let result = "";
 
     result += isStartIncluded ? '[' : '(';
 
@@ -251,7 +251,7 @@ function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
  * 'noon' => 'noon'
  */
 function reverseString(str) {
-    // var newstr = "";
+    // let newstr = "";
 
     // for (let i = str.length - 1; i >= 0; i--) {
     //     newstr += str[i];
@@ -275,9 +275,9 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-    // var length = num.toString().length;
-    // var digit = 0;
-    // var result = 0;
+    // let length = num.toString().length;
+    // let digit = 0;
+    // let result = 0;
 
     // for (let i = 1; i <= length; i++) {
     //     digit = num % 10;    
@@ -313,10 +313,10 @@ function reverseInteger(num) {
 function isCreditCardNumber(ccn) {
     const biggestDigit = 9; 
 
-    var ccnStr = ccn.toString();
-    var length = ccnStr.length;
-    var digit = 0;
-    var checkSum = 0;
+    let ccnStr = ccn.toString();
+    let length = ccnStr.length;
+    let digit = 0;
+    let checkSum = 0;
 
 
     for (let i = 1; i <= length; i++) {
@@ -351,9 +351,9 @@ function isCreditCardNumber(ccn) {
 function getDigitalRoot(num) {
     const biggestDigit = 9;
 
-    var length = 0;
-    var digit = 0;
-    var result = num;
+    let length = 0;
+    let digit = 0;
+    let result = num;
 
     while (result > biggestDigit) {
         num = result;
@@ -395,8 +395,8 @@ function getDigitalRoot(num) {
 function isBracketsBalanced(str) {
     const maxDistanceInUnicode = 2;
 
-    var bracketsArr = [];
-    var bracket = "";
+    let bracketsArr = [];
+    let bracket = "";
 
     for (let i = 0; i < str.length; i++) {
         bracket = str[i];
@@ -457,10 +457,10 @@ function timespanToHumanString(startDate, endDate) {
     const dayInYear = 365;
     const smallestAmount = 2;
 
-    var time = endDate.getTime() - startDate.getTime();
-    var timeUnit = "";
-    var roundTime = 0;
-    var number;
+    let time = endDate.getTime() - startDate.getTime();
+    let timeUnit = "";
+    let roundTime = 0;
+    let number;
 
     while (time != 0) {
 
@@ -589,8 +589,8 @@ function timespanToHumanString(startDate, endDate) {
  *    365, 10 => '365'
  */
 function toNaryString(num, n) {
-    // var str = "";
-    // var remainder = 0;
+    // let str = "";
+    // let remainder = 0;
 
     // while (num >= n)
     // {
@@ -617,11 +617,11 @@ function toNaryString(num, n) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
-    var commonPath = "";
-    var strNum = pathes.length;
-    var char = "";
+    let commonPath = "";
+    let strNum = pathes.length;
+    let char = "";
 
-    var minLength = pathes.reduce((prev, cur) => {
+    let minLength = pathes.reduce((prev, cur) => {
         return prev.length < cur.length ? prev.length : cur.length;
     }, pathes[0].length);
 
@@ -657,11 +657,11 @@ function getCommonDirectoryPath(pathes) {
  *
  */
 function getMatrixProduct(m1, m2) {
-    var rows = m1.length;
-    var columns = m2[0].length;
-    var givenSecondDim = m2.length;
+    let rows = m1.length;
+    let columns = m2[0].length;
+    let givenSecondDim = m2.length;
 
-    var product = new Array(rows).fill(0).map(() => {
+    let product = new Array(rows).fill(0).map(() => {
         return new Array(columns).fill(0);
     });
 
@@ -708,8 +708,8 @@ function getMatrixProduct(m1, m2) {
  */
 function evaluateTicTacToePosition(position) {
     const areaSize = 3;
-    var char = "";
-    var isWinner = true;
+    let char = "";
+    let isWinner = true;
 
     //Row check
     for (let i = 0; i < areaSize; i++) {
