@@ -1,4 +1,4 @@
-'use strict';
+ 'use strict';
 
 /**
  * Returns true if word occurrs in the specified word snaking puzzle.
@@ -28,135 +28,46 @@
  *   'NULL'      => false 
  */
 function findStringInSnakingPuzzle(puzzle, searchStr) {
-    /* The idea of this solution is to create an array of 
-     * possible move coordinates for every character in
-     * search string.
-     *
-     * Possible moves stored in array, which contain another arrays 
-     * for every character of search string. These arrays keeps
-     * possible moves as array of two coordinates.
-     *
-     * When current path can not be continued, we search for 
-     * nearest possible different move in array.
-     * 
-     * Once used, possible move gets deleted from array of
-     * possible moves.
-     */
-    const puzzleWidth = puzzle[0].length;
-    const puzzleHeight = puzzle.length;
 
-    let possiblePathes = new Array(searchStr.length).fill(0).map(() => {
-        return new Array();
-    });
+    const   puzzleWidth = puzzle[0].length,
+            puzzleHeight = puzzle.length;
 
-    let pos     = 0;
-    let path    = [];
-    let cur     = [];
-    let isPath  = false;
-    let i, j;
-
-    /* Searching for all occurrences of searchStr first letter in puzzle */
-    for (let j = 0; j < puzzleHeight; j++) {
-        for (let i = 0; i < puzzleWidth; i++) {
-            if (puzzle[j][i] === searchStr[pos]) {
-                possiblePathes[0].push([j, i]);
+    for (let i = 0; i < puzzleWidth; i++) {
+        for (let j = 0; j < puzzleHeight; j++) {
+            if (    puzzle[j][i] === searchStr[0] 
+                &&  tryNext(i, j, [], searchStr.slice(1))) {
+                return true;
             }
         }
     }
 
-    /* While position within the given boundaries */
-    while (pos < searchStr.length && pos >= 0) {
-
-        /* If current position equals to 0, we just take one position from list */
-        if (pos === 0) {
-            if (possiblePathes[0].length === 0) {
-                return false;
-            }
-            else {
-                cur = possiblePathes[0].shift();
-                path = [];
-                path.push(cur);
-            }
-        }
-
-        isPath = false;
-        j = cur[0];
-        i = cur[1];
-
-        /* Now we going to check bottom, top, left and right directions of current position
-         * The block before && checks if such direction exists
-         * Next block checks if this position contains required element(next character in search string)
-         */
-        if (j + 1 < puzzleHeight && puzzle[j + 1][i] === searchStr[pos + 1]) {
-            /*Does this position is already used in snake */
-            if (path.indexOf([j + 1, i] === -1))
-            {
-                possiblePathes[pos + 1].push([j + 1, i]);
-                isPath = true;
-            }
-        }
-        if (j - 1 > 0 && puzzle[j - 1][i] === searchStr[pos + 1]) {
-            if (path.indexOf([j - 1, i]) === -1)
-            {
-                possiblePathes[pos + 1].push([j - 1, i]);
-                isPath = true;
-            }
-        }
-        if (i + 1 < puzzleWidth && puzzle[j][i + 1] === searchStr[pos + 1]) {
-            if (path.indexOf([j, i + 1]) === -1)
-            {
-                possiblePathes[pos + 1].push([j, i + 1]);
-                isPath = true;
-            }
-        }
-        if (i - 1 > 0 && puzzle[j][i - 1] === searchStr[pos + 1]) {
-            if (path.indexOf([j, i - 1]) === -1)
-            {
-                possiblePathes[pos + 1].push([j, i - 1]);
-                isPath = true;
-            }
-        }
-
-        /* If there were no possible directions */
-        if (!isPath) {
-
-            /* Now we going through snake backwards and trying to find
-             * position with unused alternative routes
-             */
-            while (possiblePathes[pos].length === 0 && pos > 0 ){
-               pos--;
-               path.pop();
-            }
-
-            /*If there are no another crossway, return false */
-            if (pos < 0) {
-                return false;
-            }
-
-            /* The situation, when position equals to zero is handled by 
-             * code at the beginning of while cycle
-             */
-            else if (pos !== 0){
-                cur = possiblePathes[pos].shift();
-                path.push(cur);
-            }
-        }
-
-        /* If there were possible directions - then move on one of them */
-        else {
-            pos++;
-            cur = possiblePathes[pos].shift();
-            path.push(cur);
-        }
-
-        /* If current position in search string is at the last character
-         * of it that means, that string was found in puzzle
-         */
-        if (pos === searchStr.length - 1) {
-            return true;
-        }
-    }
     return false;
+
+    function tryNext (i, j, visited, search) {
+
+        const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        
+        visited.push(i.toString() + j.toString());
+
+        for (let num = 0; num < steps.length; num++) {
+
+            let newI = i + steps[num][0],
+                newJ = j + steps[num][1],
+                str = String.prototype.concat(newI, newJ);
+
+            if (    newI >= puzzleWidth || newI < 0 
+                ||  newJ >= puzzleHeight || newJ < 0 
+                ||  visited.indexOf(str) !== -1) {
+                continue;
+            }
+
+            if (    puzzle[newJ][newI] === search[0] 
+                && (search.length === 1 || tryNext(newI, newJ, visited, search.slice(1)))) {
+                return true;       
+            }
+        }
+        return false; 
+    }
 }
 
 
@@ -172,58 +83,30 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
  *    'ab'  => 'ab','ba'
  *    'abc' => 'abc','acb','bac','bca','cab','cba'
  */
-
- //Every time adding new char at every position of all strings
 function* getPermutations(chars) {
-    /* The idea of this solution is to take given string
-     * character by character and do the following:
-     * take every character and create new strings by 
-     * putting this character at all possible positions
-     * of every string created earlier.
-     *
-     * Example:
-     * given : abc
-     * 1st step: a
-     * 2nd step: ba, ab
-     * 3rd ster: ba -> cba, bca, bac
-     *           ab -> cab, acb, abc
-     */
-    let arr     = [];
-    let newArr  = [];
-    let pos     = 0;
 
-    /* Every char */
-    for(let i = 0; i < chars.length; i++) {
-        if (!arr.length) {
-            arr.push(chars[i]);
+    const length = chars.length;
+    let stack = [];
+
+    stack.push({string: "", visited: Array(length).fill(false)});
+
+    while (stack.length) {
+
+        let item = stack.pop();
+
+        if (item.string.length === length) {
+            yield item.string;
             continue;
         }
-        else {
-            newArr = [];
 
-            /* For every already existing string */
-            for (let j = 0; j < arr.length; j++) {
-
-                /* For every position in these strings */
-                for (let k = 0; k <= arr[0].length; k++) {
-                    if (k === 0) {
-                        newArr.push(chars[i] + arr[j]);
-                        continue;
-                    }
-                    if (k === arr[0].length) {
-                        newArr.push(arr[j] + chars[i]);
-                        continue;
-                    }
-                    newArr.push(arr[j].slice(0, k) + chars[i] + arr[j].slice(k));
-                }
+        for (let i = 0; i < length; i++) {
+            if (!item.visited[i]) {
+                let newVisited = Array.from(item.visited);
+                newVisited[i] = true;
+                stack.push({string: item.string + chars[i], visited: newVisited});
             }
-
-            /* Replacing old array with new one */
-            arr = newArr;
         }
-    }
-    while (pos < arr.length) {
-        yield arr[pos++];
+
     }
 }
 
@@ -244,42 +127,27 @@ function* getPermutations(chars) {
  *    [ 1, 6, 5, 10, 8, 7 ] => 18  (buy at 1,6,5 and sell all at 10)
  */
 function getMostProfitFromStockQuotes(quotes) {
-    /* The idea of this solution is to find max price
-     * and buy everything until it and sell it with
-     * max price. After that, we'll find max price in
-     * the remaining string and so on...
-     *
-     * If max price in the remaining string is on it's
-     * first position - we won't buy anything and will 
-     * wait for another possibility.
-     */
-    let max     = Math.max.apply(null, quotes);
-    let items   = 0;
-    let outcome = 0;
-    let profit  = 0;
+    
+    let items   = 0,
+        outcome = 0,
+        max     = Math.max.apply(null, quotes);
 
-    /* If it is not the max price yet - then buy everything */
-    for (let current = 0; current < quotes.length; current++){
-        if (quotes[current] !== max) {
-            outcome += quotes[current];
+    return quotes.reduce((profit, cur, index) => {
+
+        if (cur !== max) {
+            outcome += cur;
             items++;
-        }
-
-        /* If it is the max price - then sell everything */
-        if (quotes[current] === max) {
-            if (items !== 0)
-            {
-                profit += quotes[current] * items - outcome;
+        } else {
+            max = Math.max.apply(null, quotes.slice(index + 1));
+            if (items !== 0) {
+                profit += cur * items - outcome;
                 outcome = 0;
                 items = 0;
-            }
-
-            /* Find next max value in stock quotes */
-            max = Math.max.apply(null, quotes.slice(current + 1));
+            }        
         }
-    }
+        return profit;
 
-    return profit;
+    }, 0);
 }
 
 
@@ -301,7 +169,7 @@ function UrlShortener() {
     /* The idea of this solution is that there 84
      * allowed symbols and each of them can be represented
      * with 7 bits. Besides, one Unicode character has 16 bits
-     * length, so we can store two allowed characters in one
+     * length, so we can store only two allowed characters in one
      * Unicode character. 
      *
      * Also, every url begins with 'https://', so we can
@@ -316,23 +184,20 @@ function UrlShortener() {
 UrlShortener.prototype = {
 
     encode: function(url) {
-        let char1 = 0;
-        let char2 = 0;
-        let result = '';
+        const bitsNumber = Math.ceil(Math.log2(this.urlAllowedChars.length)); //7
 
-        /* Start from eigth position to omit 'https://' and take two characters at a time */ 
+        let char1 = 0,
+            char2 = 0,
+            result = '';
+         
         for (let pos = 8; pos < url.length; pos += 2) {
             char1 = this.urlAllowedChars.indexOf(url[pos]);
 
-            /* There are no second character maybe */
             if (pos + 1 < url.length) {
-                char2 = this.urlAllowedChars.indexOf(url[pos + 1]) << 7;
-                
-            }
-            else {
-
-                /* In this case we'll give to our number value, that is not present in allowed list*/
-                char2 = 100 << 7;
+                char2 = this.urlAllowedChars.indexOf(url[pos + 1]) << bitsNumber;
+            } else {
+                /* Giving to our number value, that is not present in allowed list*/
+                char2 = -1 << 7;
             }
             result += String.fromCharCode(char1 | char2);
         }
@@ -340,22 +205,18 @@ UrlShortener.prototype = {
     },
     
     decode: function(code) {
+        const bitsNumber = Math.ceil(Math.log2(this.urlAllowedChars.length)); //7
+        const mask = Number.parseInt('1'.repeat(bitsNumber), 2);
+
         let result = 'https://';
-        let char1 = 0;
-        let char2 = 0;
-        let symbol = 0;
-
+        
         for (let i = 0; i < code.length; i++) {
-            /* Extracting numbers from Unicode character and searching appropriate values in list*/
-            symbol = code[i].charCodeAt();
-            char1 = this.urlAllowedChars[symbol & 0x7F];
-            char2 = this.urlAllowedChars[symbol >> 7 & 0x7F];
+    
+            let symbol = code[i].charCodeAt(),
+                char1 = this.urlAllowedChars[symbol & mask],
+                char2 = this.urlAllowedChars[symbol >> bitsNumber & mask];
 
-            /* There are no character with such number in list maybe */
-            if (char2 === undefined) {
-                char2 = '';
-            }
-            result += char1 + char2;
+            result += char1 + (char2 !== undefined ? char2 : '');
         }
         return result;
     } 

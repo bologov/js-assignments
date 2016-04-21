@@ -201,13 +201,17 @@ function extractEmails(str) {
  *
  */
 function getRectangleString(width, height) {
-    let topSide = "┌", bottomSide = "└", filler = "│";
+	const anglesOnLine = 2;
 
-    topSide = topSide.concat("─".repeat(width - 2), "┐", "\n");
-    bottomSide = bottomSide.concat("─".repeat(width - 2), "┘", "\n");
-    filler = filler.concat(" ".repeat(width - 2), "│", "\n")
+    let topSide = "┌", 
+    	bottomSide = "└", 
+    	filler = "│";
 
-    return topSide.concat(filler.repeat(height - 2), bottomSide);
+    topSide = 		topSide.concat(		"─".repeat(width - anglesOnLine), "┐", "\n");
+    bottomSide = 	bottomSide.concat(	"─".repeat(width - anglesOnLine), "┘", "\n");
+    filler = 		filler.concat(		" ".repeat(width - anglesOnLine), "│", "\n");
+
+    return topSide.concat(filler.repeat(height - anglesOnLine), bottomSide);
 }
 
 
@@ -227,11 +231,11 @@ function getRectangleString(width, height) {
  *
  */
 function encodeToRot13(str) {
+	const lettersCount = 26;
     let result = "";
-    const lettersCount = 26;
-    return str.replace(/[A-Za-z]/g, function(letter) {
-        return String.fromCharCode((letter.charCodeAt(0) + 13 - lettersCount * (letter.toUpperCase() >= "N")));
-    });
+    
+    return str.replace(/[A-Za-z]/g, letter => 
+                String.fromCharCode(letter.charCodeAt(0) + 13 - lettersCount * (letter.toUpperCase() >= "N")));
 }
 
 /**
@@ -248,7 +252,9 @@ function encodeToRot13(str) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-    return value !== undefined && value !== null && typeof value.valueOf() === "string";
+    return value !== undefined 
+        && value !== null 
+        && typeof value.valueOf() === "string";
 }
 
 
@@ -277,9 +283,12 @@ function isString(value) {
  *   'K♠' => 51
  */
 function getCardId(value) {
-    let card = "A234567891JQK";
-    let suit = "♣♦♥♠";
-    return card.indexOf(value[0]) + suit.indexOf(value[value.length - 1]) * 13;
+	const sameSuitNumber = 13;
+
+    let card = "A234567891JQK",
+    	suit = "♣♦♥♠";
+
+    return card.indexOf(value[0]) + suit.indexOf(value[value.length - 1]) * sameSuitNumber;
 }
 
 

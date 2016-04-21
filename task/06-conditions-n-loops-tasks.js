@@ -53,10 +53,15 @@ function getFizzBuzz(num) {
  *   10 => 3628800
  */
 function getFactorial(n) {
-    if (n == 1) {
-        return 1;
+    let result = 1,
+        i = 1;
+
+    while (i <= n) {
+        result *= i;
+        i++;
     }
-    return n * getFactorial(n - 1);
+
+    return result;
 }
 
 
@@ -96,7 +101,9 @@ function getSumBetweenNumbers(n1, n2) {
  *   10,10,10 =>  true
  */
 function isTriangle(a,b,c) {
-    return a + b > c && a + c > b && b + c > a;
+    return a + b > c 
+        && a + c > b 
+        && b + c > a;
 }
 
 
@@ -133,12 +140,11 @@ function isTriangle(a,b,c) {
  *  
  */
 function doRectanglesOverlap(rect1, rect2) {
-    return rect1.left < rect2.left + rect2.width 
+    return rect2.left + rect2.width > rect1.left 
         && rect1.left + rect1.width > rect2.left 
-        && rect1.top < rect2.top + rect2.height
+        && rect2.top + rect2.height > rect1.top  
         && rect1.top + rect1.height > rect2.top;
-
-}
+    }
 
 
 /**
@@ -188,9 +194,7 @@ function findFirstSingleChar(str) {
 
     for (let i = 0; i < str.length; i++) {
         char = str[i];
-
-        if (str.indexOf(char) === str.lastIndexOf(char))
-        {
+        if (str.indexOf(char) === str.lastIndexOf(char)) {
             return char;
         }
     }
@@ -224,14 +228,9 @@ function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
     let result = "";
 
     result += isStartIncluded ? '[' : '(';
-
-    if (a > b) {
-        result += b + ', ' + a;
-    }
-    else {
-        result += a + ', ' + b;
-    }
-
+    result +=   [a, b]
+                .sort((a, b) => a - b)
+                .join(', ');
     result += isEndIncluded ? ']' : ')';
 
     return result;
@@ -286,7 +285,11 @@ function reverseInteger(num) {
     // }
 
     // return result;
-    return num.toString().split('').reverse().join('');
+    return  num
+            .toString()
+            .split('')
+            .reverse()
+            .join('');
 }
 
 
@@ -311,12 +314,12 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-    const biggestDigit = 9; 
+    const   biggestDigit = 9,
+            length = ccn.toString().length;
 
-    let ccnStr = ccn.toString();
-    let length = ccnStr.length;
-    let digit = 0;
-    let checkSum = 0;
+    let ccnStr = ccn.toString(),
+        digit = 0,
+        checkSum = 0;
 
 
     for (let i = 1; i <= length; i++) {
@@ -326,7 +329,7 @@ function isCreditCardNumber(ccn) {
             if (digit > biggestDigit) {
                 digit -= biggestDigit;
             }
-        }   
+        }
         checkSum += digit;
     }
 
@@ -393,27 +396,22 @@ function getDigitalRoot(num) {
  *   '{[(<{[]}>)]}' = true 
  */
 function isBracketsBalanced(str) {
-    const maxDistanceInUnicode = 2;
+    const openBrackets = ["[", "(", "{", "<"],
+          closeBrackets = ["]", ")", "}", ">"];
 
-    let bracketsArr = [];
-    let bracket = "";
+    let arr = [],
+        bracket = "";
 
     for (let i = 0; i < str.length; i++) {
         bracket = str[i];
-
-        if (bracket === "[" || bracket === "(" || bracket === "{" || bracket === "<") {
-            bracketsArr.push(bracket);
+        if (openBrackets.indexOf(bracket) !== -1) {
+            arr.push(bracket);
         }
-        else {
-            if (bracketsArr.length === 0) {
-                return false;
-            }
-            else if (Math.abs(bracketsArr.pop().charCodeAt() - bracket.charCodeAt()) > maxDistanceInUnicode) {
-                return false;
-            }
+        else if (arr.length === 0 || closeBrackets.indexOf(bracket) !== openBrackets.indexOf(arr.pop())) {
+            return false;
         }
     }
-    return bracketsArr.length === 0;
+    return arr.length === 0;
 }
 
 
@@ -449,123 +447,38 @@ function isBracketsBalanced(str) {
  *
  */
 function timespanToHumanString(startDate, endDate) {
-    const milliInSec = 1000;
-    const secInMin = 60;
-    const minInHour = 60;
-    const hourInDay = 24;
-    const dayInMonth = 30;
-    const dayInYear = 365;
-    const smallestAmount = 2;
+    const   SECONDS = 1000,
+            MINUTES = 60 * SECONDS,
+            HOURS   = 60 * MINUTES,
+            DAYS    = 24 * HOURS,
+            MONTHS  = 30 * DAYS,
+            YEARS   = 12 * MONTHS;
+            
 
     let time = endDate.getTime() - startDate.getTime();
-    let timeUnit = "";
-    let roundTime = 0;
-    let number;
 
-    while (time != 0) {
+    if (time <= 45 * SECONDS)   return "a few seconds ago";
+    if (time <= 90 * SECONDS)   return "a minute ago";
+    if (time <= 45 * MINUTES)   return createHumanReadableString(time / MINUTES, " minutes ago");
+    if (time <= 90 * MINUTES)   return "an hour ago";
+    if (time <= 22 * HOURS)     return createHumanReadableString(time / HOURS, " hours ago");
+    if (time <= 36 * HOURS)     return "a day ago";
+    if (time <= 25 * DAYS)      return createHumanReadableString(time / DAYS, " days ago");
+    if (time <= 45 * DAYS)      return "a month ago";
+    if (time <= 345 * DAYS)     return createHumanReadableString(time / MONTHS, " months ago");
+    if (time <= 545 * DAYS)     return "a year ago";
+    return createHumanReadableString(time / YEARS, " years ago");
 
-        //Get seconds
-        time /= milliInSec;
+    function createHumanReadableString(time, template) {
+        const smallestNumber = 2;
 
-        if (time > 0 && time <= 45) {    
-            number = "a few";
-            timeUnit = "seconds";
-            break;
+        if (time < smallestNumber || time % 1 > 0.5) {
+            time = Math.round(time);
+        } else {
+            time = Math.floor(time);
         }
-        if (time > 45 && time <= 90) {
-            number = "a";
-            timeUnit = "minute";
-            break;
-        }
-
-        //Get minutes
-        time /= secInMin;
-
-        if (Math.round(time) >= 2 &&  time <= 45) {          
-            number = smallestAmount;
-            roundTime = Math.floor(time);
-            if (number < roundTime) {
-                number = roundTime;
-            }
-            timeUnit = "minutes";
-            break;
-        }
-        if (time > 45 &&  time <= 90) {
-            number = "an";
-            timeUnit = "hour";
-            break;
-        }
-
-        //Get hours
-        time /= minInHour;
-
-        if (Math.round(time) >= 2 &&  time <= 22) {
-            number = smallestAmount;
-            roundTime = Math.floor(time);
-            if (number < roundTime) {
-                if (time % 1 > 0.5) {
-                    number = Math.round(time);
-                }
-                else {
-                    number = roundTime;
-                }
-            }
-            timeUnit = "hours";
-            break;
-        }
-        if (time > 22 &&  time <= 36) {
-            number = "a";
-            timeUnit = "day";
-            break;
-        }
-
-        //Get days
-        time /= hourInDay; 
-
-        if (time <= 25) {
-            number = smallestAmount;
-            roundTime = Math.floor(time);
-            if (number < roundTime) {
-                if (time % 1 > 0.5) {
-                    number = Math.round(time);
-                }
-                else {
-                    number = roundTime;
-                }
-            }
-            timeUnit = "days";
-            break;
-        }
-        else if (time <= 45) {
-            number = "a"
-            timeUnit = "month";
-            break;
-        }
-        else if (time <= 345) {
-            number = smallestAmount;
-            roundTime = Math.round(time / dayInMonth);      
-            if (number < roundTime) {
-                number = roundTime;
-            }
-            timeUnit = "months";
-            break;
-        }
-        else if (time <= 545) {
-            number = "a"
-            timeUnit = "year";
-            break;
-        }
-        else {
-            number = smallestAmount;
-            roundTime = Math.round(time / dayInYear);
-            if (number < roundTime) {
-                number = roundTime;
-            }
-            timeUnit = "years";
-            break;
-        }
-    }
-    return `${number} ${timeUnit} ago`;
+        return time + template;
+    }  
 }
 
 
@@ -617,20 +530,19 @@ function toNaryString(num, n) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
+    const   pathesNumber = pathes.length,
+            minLength = pathes.reduce((prev, cur) => prev.length < cur.length ? prev.length : cur.length);
+            
+    
     let commonPath = "";
-    let strNum = pathes.length;
     let char = "";
-
-    let minLength = pathes.reduce((prev, cur) => {
-        return prev.length < cur.length ? prev.length : cur.length;
-    }, pathes[0].length);
 
     for (let i = 0; i < minLength; i++) {
         char = pathes[0][i];
-        for (let cur = 1; cur < strNum; cur++) {
-            if (char !== pathes[cur][i]) {
-                return commonPath.slice(0, commonPath.lastIndexOf('/') + 1);
-            }
+        for (let cur = 1; cur < pathesNumber; cur++) {
+            if (char === pathes[cur][i]) continue;
+
+            return commonPath.slice(0, commonPath.lastIndexOf('/') + 1);
         }
         commonPath += char;
     }
@@ -657,21 +569,25 @@ function getCommonDirectoryPath(pathes) {
  *
  */
 function getMatrixProduct(m1, m2) {
-    let rows = m1.length;
-    let columns = m2[0].length;
-    let givenSecondDim = m2.length;
+    const   rows = m1.length,
+            columns = m2[0].length,
+            givenSecondDim = m2.length;
 
-    let product = new Array(rows).fill(0).map(() => {
-        return new Array(columns).fill(0);
-    });
+    let product =   Array(rows)
+                    .fill(0)
+                    .map(() => Array(columns).fill(0));
 
     return product.map((row, i) => {
+
         return row.map((elem, j) => {
+
             for (let k = 0; k < givenSecondDim; k++) {
                 elem += m1[i][k] * m2[k][j];
             }
             return elem;
+
         });
+
     });
 }
 
@@ -707,67 +623,22 @@ function getMatrixProduct(m1, m2) {
  *
  */
 function evaluateTicTacToePosition(position) {
-    const areaSize = 3;
-    let char = "";
-    let isWinner = true;
+    const   getCell = i => position[Math.floor(i / 3)][i - (Math.floor(i / 3) * 3)],
+            winnerPositions = [ [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                                [0, 4, 8], [2, 4, 6] ];
 
-    //Row check
-    for (let i = 0; i < areaSize; i++) {
-        isWinner = true;
-        char = position[i][0];
-        for (let j = 1; j < areaSize; j++) {
-            if (char !== position[i][j] || char === undefined) {
-                isWinner = false;
-                break;
-            }
-        }
-        if (isWinner) {
-            return char;
+    for (let i = 0; i < winnerPositions.length; i++) {
+        let cur = winnerPositions[i],
+            value = getCell(cur[0]);
+            
+        if ( value === getCell(cur[1]) 
+          && value === getCell(cur[2]) 
+          && value !== undefined) {
+            return value;
         }
     }
-
-    //Column check
-    for (let j = 0; j < areaSize; j++) {
-        isWinner = true;
-        char = position[0][j];
-        for (let i = 1; i < areaSize; i++) {
-            if (char !== position[i][j] || char === undefined) {
-                isWinner = false;
-                break;
-            }
-        }
-        if (isWinner) {
-            return char;
-        }
-    }
-
-    //Diagonal check
-    char = position[0][0];
-    isWinner = true;
-    for (let i = 1; i < areaSize; i++) {
-        if (char !== position[i][i] || char === undefined) {
-            isWinner = false;
-            break;
-        }
-    }
-    if (isWinner) {
-        return char;
-    }
-    
-
-    //Antidiagonal check
-    char = position[0][areaSize - 1];
-    isWinner = true;
-    for (let i = 1; i < areaSize; i++) {
-        if (char !== position[i][areaSize - 1 - i] || char === undefined) {
-            isWinner = false;
-            break;
-        }
-    }
-    if (isWinner) {
-        return char;
-    }
-    return undefined;
+    return;
 }
 
 

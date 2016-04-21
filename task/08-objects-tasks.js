@@ -120,17 +120,17 @@ const cssSelectorBuilder = {
     selector: '',
 
     orderCheck: function(regex) {
-        if (this.selector.match(regex) !== null) {
-            this.selector = '';
-            throw new Error(this.errWrongOrder);
-        } 
+        if (this.selector.match(regex) === null) return;
+
+        this.selector = '';
+        throw new Error(this.errWrongOrder);
     },
 
     timesCheck: function(elem) {
-        if (this.selector.indexOf(elem) !== -1) {
-            this.selector = '';
-            throw new Error(this.errMoreThanOneTime);
-        }
+        if (this.selector.indexOf(elem) === -1) return;
+
+        this.selector = '';
+        throw new Error(this.errMoreThanOneTime);
     },
 
     element: function(value) {

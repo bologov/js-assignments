@@ -34,24 +34,20 @@
  */
 function* get99BottlesOfBeer() {
     let num = 99;
-    let s = "s";
-    while (num !== "no more")
-    {
-        yield `${num} bottle${s} of beer on the wall, ${num} bottle${s} of beer.`;
+    while (num >= 0) {
 
+        if (num >= 2) {
+            yield(`${num} bottles of beer on the wall, ${num} bottles of beer.`);
+            yield(`Take one down and pass it around, ${num - 1} bottle${num - 1 !== 1 ? 's' : ''} of beer on the wall.`);
+        } else if (num === 1) {
+            yield(`${num} bottle of beer on the wall, ${num} bottle of beer.`);
+            yield("Take one down and pass it around, no more bottles of beer on the wall.");
+        } else {
+            yield("No more bottles of beer on the wall, no more bottles of beer.");
+            yield("Go to the store and buy some more, 99 bottles of beer on the wall.");
+        }
         num--;
-        if (num === 1) {
-            s = "";
-        }
-        if (num === 0) {
-            s = "s";
-            num = "no more";
-        }
-        
-        yield `Take one down and pass it around, ${num} bottle${s} of beer on the wall.`;
-    }
-    yield "No more bottles of beer on the wall, no more bottles of beer.";
-    yield "Go to the store and buy some more, 99 bottles of beer on the wall.";
+    }  
 }
 
 
@@ -65,14 +61,14 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-    let fnum1 = 0;
-    let fnum2 = 1;
+    let num1 = 0;
+    let num2 = 1;
     let cur;
     
     while (true) {
-        cur = fnum1;
-        fnum1 = fnum2
-        fnum2 = cur + fnum2;
+        cur = num1;
+        num1 = num2
+        num2 = cur + num2;
         yield cur;
     }
 }
@@ -110,22 +106,15 @@ function* getFibonacciSequence() {
  */
 function* depthTraversalTree(root) {
     let stack = [];
-    let substack = [];
+    stack.push(root);
 
-    while (root != undefined) {
+    while (stack.length) {
+        let node = stack.pop();
+        yield node;
 
-        if ('children' in root) {
-            substack = [];
-
-            for (let childNode of root.children) {
-                substack.push(childNode);
-            }
-
-            stack = substack.concat(stack);
+        if (node.children) {
+            stack = stack.concat(node.children.reverse());
         }
-
-        yield root;
-        root = stack.shift();
     }
 }
 
@@ -151,20 +140,16 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    let stack = [];
+    let queue = [];
+    queue.push(root);
 
-    while (root != undefined) {
+    while (queue.length) {
+        let node = queue.shift();
+        yield node;
 
-        if ('children' in root) {
-
-            for (let childNode of root.children) {
-                stack.push(childNode);
-            }
-
+        if (node.children) {
+            queue = queue.concat(node.children);
         }
-
-        yield root;
-        root = stack.shift();
     } 
 }
 
@@ -183,23 +168,22 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-    var source1 = source1();
-    var source2 = source2();
-
-    let val1, val2;
+    var src1 = source1(),
+        src2 = source2();
 
     while (true) {
 
-        val1 = source1.next();
-        val2 = source2.next();
+        let val1 = src1.next(),
+            val2 = src2.next();
 
         if (val1.done) {
             yield val2.value;
-            yield* source2;
+            yield* src2;
         }
-        else if (val2.done) {
+
+        if (val2.done) {
             yield val1.value;
-            yield* source1;
+            yield* src1;
         }
 
         yield* [val1.value, val2.value].sort((a, b) => a - b);

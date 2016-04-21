@@ -17,51 +17,30 @@
  *  ]
  */
 function createCompassPoints() {
-    /* The idea of this solution is to use found given 
-     * the law of distribution compass points names
-     * and azimuth.
-     */
-    const azimuthPerPoint   = 11.25;
-    const pointsPerCardinal = 8;
-    const cardinalsNum      = 4;
 
+    const   azimuthPerPoint   = 11.25,
+            pointsPerCardinal = 8,
+            cardinalsNum      = 4,
+            sides = ['N','E','S','W'];  // use array of cardinal directions only!
 
-    let azimuth = 0;
-    let compass = [];
-    let sides = ['N','E','S','W'];  // use array of cardinal directions only!
-    let cur, next, half;
-    let abbr = '';
-    let first, second;
+    let azimuth = 0,
+        compass = [];
 
-    for (let cardinal = 0; cardinal < cardinalsNum; cardinal++) {
-        cur = sides[cardinal];
+    sides.map((cur, index) => {
 
-        /* Next side for W is N */
-        next    = cardinal !== cardinalsNum - 1     ? sides[cardinal + 1]   : sides[0];
-
-        /* If half side contains either 'S' or 'N' - it will be at the first position*/
-        half  = next === 'S' || next === 'N'        ? next + cur            : cur + next;
-        
-        /* Law of distribution of left part of abbreviation for every point */
-        first = [cur, cur, cur, half, half, half, next, next];
-
-        /* Half of law of distribution of right part of abbreviation for every point */
-        second = ['', next, half, cur];
-
-        /* It made from two same parts*/
-        second = second.concat(second);
+        let next    = index !== cardinalsNum - 1    ? sides[index + 1]  : sides[0],
+            half    = next === 'S' || next === 'N'  ? next + cur        : cur + next,
+            first   = [cur, cur, cur, half, half, half, next, next],
+            second  = ['', next, half, cur, '', next, half, cur];
 
         for (let point = 0; point < pointsPerCardinal; point++) { 
 
-            /* Every second point contains 'b' in the middle of abbreviation*/
-            abbr = first[point] + (  point % 2 === 1     ? 'b'   : '' ) + second[point];
+            let abbr = first[point] + (point % 2 === 1  ? 'b'   : '') + second[point];
+            azimuth = (point + index * pointsPerCardinal) * azimuthPerPoint;
 
-            /* Azimuth equals to multiplication of absolute point number with degrees per point*/
-            azimuth = (point + cardinal * pointsPerCardinal) * azimuthPerPoint;
             compass.push({abbreviation: abbr, azimuth: azimuth});
         }
-
-    }
+    });
     return compass;
 }
 
@@ -100,74 +79,23 @@ function createCompassPoints() {
  *   'nothing to do' => 'nothing to do'
  */
 function* expandBraces(str) {
-    /* The idea of this solution is to search for the
-     * first pair of brackets(both open and close) in given string.
-     *
-     * One string from start of list with found pair in it will 
-     * be replaced with a certain number of strings which equals
-     * to number of items containing in the found pair of brackets. 
-     * It's items will replace brackets in copies of given string and
-     * those strings will pushed to the end of list.
-     */
-    let letiants    = [];
-    let stack       = [];
-    let items       = [];
-    let pos         = 0;
-    let begin       = 0;
-    let end         = 0;
-    let isBraces    = false;
-    let newstr      = '';
 
-    /* Pushing given string in letiants array */
-    letiants.push(str);
+    let queue = [str],
+        results = [],
+        regex = /{([^\{\}]+)}/;
 
-    while (true) {
-        isBraces = false;
+    while (queue.length) {
+        let item = queue.shift(),
+            matches = item.match(regex);
 
-        /* For first string in result array */
-        for (let i = 0; i < letiants[0].length; i++) {
-
-            /* Opening bracket found */
-            if (letiants[0][i] === '{') {
-                isBraces = true;
-                stack.push(i);
-            }
-
-            /* Closing bracket found */
-            if (letiants[0][i] === '}') {
-                begin = stack.pop();
-                end = i;
-
-                /* Items inside of pair of brackets are separated with commas*/
-                items = letiants[0].slice(begin + 1, end).split(',');
-
-                /* For every item in found pair*/
-                for (let letiant = 0; letiant < items.length; letiant++) {
-
-                    /* Replacing pair of brackets with one of items containing in it*/
-                    newstr = letiants[0].slice(0, begin) + items[letiant] + letiants[0].slice(end + 1);
-
-                    /* Check to avoide duplication when nested pairs are present */
-                     if (letiants.indexOf(newstr) === -1) {
-
-                        /* New strings pushed to the end of array*/
-                        letiants.push(newstr);
-                    }     
-                }
-
-                /* String with found pair of brackets gets removed from the start */
-                letiants.shift();
-                stack = [];
-                break;
-            }
+        if (matches !== null) {
+            matches[1].split(',').map(cur => {
+                queue.push(item.replace(matches[0], cur));
+            });
+        } else if (results.indexOf(item) === -1) {
+            results.push(item);
+            yield item;
         }
-        if (!isBraces) {
-            break;
-        }
-    }
-
-    while (pos < letiants.length) {
-        yield letiants[pos++];
     }
 }
 
@@ -207,63 +135,59 @@ function getZigZagMatrix(n) {
      * At the very first step direction is considered
      * to be right(->);
      */
-    let posX        = 0;
-    let posY        = 0;
-    let filler      = 0;
-    let goingLeft   = false;
-    let xChange  = 0;
-    let yChange  = 0;
+    let posX    = 0,
+        posY    = 0,
+        filler  = 0,
+        dir     = 0,
+        xChange = 1,
+        yChange = -1,
+        matrix  =   Array(n)
+                    .fill(0)
+                    .map(() => Array(n).fill(0));
 
-    let matrix = new Array(n).fill(0).map(() => {
-        return new Array(n).fill(0);
-    });
+    while (filler < n * n) {
 
-    /* Check for being in borders of matrix*/
-    while (posX < n && posY < n) {
-
-        /* Changing current element of matrix and filler's value */
         matrix[posY][posX] = filler++;
 
-        /* If going to right and reached the top line but not the right line*/
-        if (posY === 0 && posX !== n - 1 && goingLeft === false) {
-            goingLeft = true;
-            posX += 1;
-            xChange = -1;
-            yChange = 1;
-            continue;
+        /*Searching for border reach*/
+        if (dir === 0)
+        {
+            if (posX === n - 1) {
+                swapAndChange(false);
+                continue;
+            }
+            if (posY === 0) {
+                swapAndChange(true);
+                continue;
+            }
+        } else {
+            if (posY === n - 1) {
+                swapAndChange(true);
+                continue;
+            }
+            if (posX === 0) {
+                swapAndChange(false);
+                continue;
+            }
         }
-        /* If going to right and reached the right line but not the top line*/
-        if (posX === n - 1 && goingLeft === false) {
-            goingLeft = true;
-            posY += 1;
-            xChange = -1;
-            yChange = 1;
-            continue;
-        }
-        /* If going to left and reached the bottom line*/
-        if (posY === n - 1 && goingLeft === true) {
-            goingLeft = false;
-            posX += 1;
-            xChange = 1;
-            yChange = -1;
-            continue;
-        }
-        /* If going to left and reached the left line*/
-        if (posX === 0 && goingLeft === true) {
-            goingLeft = false;
-            posY += 1;
-            xChange = 1;
-            yChange = -1;
-            continue;
-        }
-        /* If no borders were reached*/
-        else {
-            posX += xChange;
-            posY += yChange;
-        }
-        
+
+        /* No borders were reached*/
+        posX += xChange;
+        posY += yChange;
+      
     }
     return matrix;
+
+    function swapAndChange(posXChange){
+        dir = dir === 0 ? 1 : 0;
+        xChange *= -1;
+        yChange *= -1;
+        if (posXChange) {
+            posX += 1;
+        } else {
+            posY += 1;
+        }
+    }
 }
 
 
@@ -297,7 +221,7 @@ function canDominoesMakeRow(dominoes) {
      * same dominoe) should be considered as start and end 
      * of the row and they do not participate in numbers counting.
      *
-     * We should check all letiants with letious numbers excluded.
+     * We should check all variants with various numbers excluded.
      *
      * The problem is dominoes with same numbers on both side. If such
      * dominoe is used the count of it's number in given string 
@@ -305,74 +229,57 @@ function canDominoesMakeRow(dominoes) {
      * used for either start or end.
      */
     const dominoeDigitsNum = 7;
-    let digits = new Array(dominoeDigitsNum).fill(0);
-    let isSame = new Array(dominoeDigitsNum).fill(0);
 
-    let dominoesGiven   = dominoes.length;
-    let dominoesStr     = '';
-    let isFound         = false;
-    let i, j;
-    
-    /* Making dominoes string */
-    for (let x = 0; x < dominoesGiven; x++) {
-        dominoesStr += dominoes[x].join('');
-    }
+    let digits = Array(dominoeDigitsNum).fill(0),
+        isSame = Array(dominoeDigitsNum).fill(0),
+        isFound = false,
+        exclude = [];
+        
+    var generate = getDominoes();
 
-    /* Check for existence of bones with same numbers on both it's sides */
-    for (let x = 0; x < dominoesGiven; x++) {
-        if (dominoes[x][0] === dominoes[x][1]) {
-            isSame[dominoes[x][0]] = [x * 2, x * 2 + 1];
+    dominoes.forEach((cur, i) => {
+        digits[cur[0]]++;
+        digits[cur[1]]++;
+
+        if (cur[0] === cur[1]) {
+            isSame[cur[0]] = i;
+        }
+    });
+   
+    while (exclude = generate.next().value) {
+        isFound = true;
+        let localDigits = Array.from(digits);
+        localDigits[exclude[0]]--;
+        localDigits[exclude[1]]--;
+
+        for (let x = 0; x < dominoeDigitsNum; x++) {
+            if (localDigits[x] % 2 === 0 
+                && !(isSame[x] && isSame[x] !== exclude[2] && isSame[x] !== exclude[3])) continue;
+
+            isFound = false;
+            break;
+        }
+
+        if (isFound) {
+            return true;
         }
     }
 
-    /* Excluding every possible pair of numbers from string */
-    for (i = 0; i < dominoesStr.length; i++) {
-        for (j = i + 1; j < dominoesStr.length; j++) {
-
-            /* Skip if this pair of numbers is situated on the same dominoe */
-            if (i % 2 === 0 && j - i === 1) {
-                continue;
-            }
-
-            digits.fill(0);
-            isFound = true;
-
-            /* Counting appears of each number in string excluding choosed pair */
-            for (let x = 0; x < dominoesStr.length; x++) {
-                if (x === i || x === j) {
-                    continue;
-                }
-                digits[dominoesStr[x]]++;
-            }
-
-            /* Checking if row of dominoes is possible*/
-            for (let x = 0; x < dominoeDigitsNum; x++) {
-
-                /* If number of appears is odd */
-                if (digits[x] % 2 !== 0) {
-                    isFound = false;
-                    break;
-                }
-
-                /* If there are dominoe with same numbers on it's sides but 
-                 * this number appears only twice 
-                 */
-                else if (isSame[x] && digits[x] === 2) {
-
-                    /* It can be only if this dominoe got excluded number */
-                    if (isSame[x][0] === i || isSame[x][0] === j || isSame[x][1] === i || isSame[x][1] === j) {
-                        continue;
-                    }
-                    isFound = false;
-                    break;
-                }
-            }
-            if (isFound) {
-                return true;
-            }
-        }
-    }
     return false;
+
+    function* getDominoes() {
+        /* Flatten dominoes to string */
+        let dominoesStr = dominoes.reduce((prev, cur) => prev.concat(cur.join('')), "");
+        for (let i = 0; i < dominoesStr.length; i++) {
+            for (let j = i + 1; j < dominoesStr.length; j++) {
+                /* Skip if this pair of numbers is situated on the same dominoe */
+                if (i % 2 === 0 && j - i === 1) continue;
+                /*Return two digits, and number of bones it is situated at*/
+                yield [dominoesStr[i], dominoesStr[j], Math.floor(i / 2), Math.floor(j / 2)];
+            }
+        }
+        return undefined;
+    }
 }
 
 
@@ -406,52 +313,39 @@ function extractRanges(nums) {
      * an separate values. After that, element from array
      * will be pushed to the empty sequence.
      */
-    let result = "";
-    let currentSequence = [];
-    let position = 0;
+    let sequence = [];
 
-    while(position < nums.length) {
-
-        /* If sequence array is empty or given number follows after last number in sequence - 
-         * then just push current number in it.
-         */
-        if (!currentSequence.length || nums[position] - currentSequence[currentSequence.length - 1] === 1) {
-            currentSequence.push(nums[position]);
-        }
-        else {
-
-            /* If current number doesn't follow after last  number in sequence -
-             * then we need to transform sequence into string and concat it to result
-             */
-            if (currentSequence.length <= 2) {
-                addSequenceToResultAndEmptyIt(currentSequence);
-            }   
-            else {
-                addSequenceToResultAndEmptyIt(currentSequence.shift() + '-' + currentSequence.pop());
+    let result = {
+        string: "",
+        add: function(sequence) {
+            if (result.string !== '') {
+                result.string += ',';
             }
-            
-            /* Pushing current number in the empty sequence */
-            currentSequence.push(nums[position]);              
-        }
-        position++;
-    }
 
-    /* If sequence isn't empty, we need to concat it's content to result */
-    if (currentSequence.length && currentSequence.length <= 2) {
-        addSequenceToResultAndEmptyIt(currentSequence);
-    }
-    else if (currentSequence.length > 2) {
-        addSequenceToResultAndEmptyIt(currentSequence.shift() + '-' + currentSequence.pop());
-    }
-    return result;
-
-    function addSequenceToResultAndEmptyIt(arg) {
-        if (result !== '') {
-            result += ',';
+            if (sequence.length > 2) {
+                result.string += sequence.shift() + '-' + sequence.pop();
+            } else {
+                result.string += sequence.join(',');
+            }
+            return [];
         }
-        result += arg;
-        currentSequence = [];
+    };
+
+    nums.map(cur => {
+
+        if (sequence.length && cur - sequence[sequence.length - 1] !== 1) {
+            sequence = result.add(sequence);
+        }
+        
+        sequence.push(cur);
+
+    });
+
+    if (sequence.length) {
+        sequence = result.add(sequence);
     }
+    
+    return result.string;
 }
 
 module.exports = {

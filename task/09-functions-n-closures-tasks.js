@@ -26,9 +26,7 @@
  *
  */
 function getComposition(f,g) {
-    return x => {
-        return f(g(x));
-    }
+    return x => f(g(x));
 }
 
 
@@ -49,9 +47,7 @@ function getComposition(f,g) {
  *
  */
 function getPowerFunction(exponent) {
-    return x => {
-        return Math.pow(x, exponent);
-    }
+    return x => Math.pow(x, exponent);
 }
 
 
@@ -70,6 +66,7 @@ function getPowerFunction(exponent) {
  */
 function getPolynom() {
     return x => {
+
         let result = 0;
 
         for (let i = 0; i < arguments.length; i++) {
@@ -97,13 +94,7 @@ function getPolynom() {
  */
 function memoize(func) {
     let cache;
-
-    return x => {
-        if (cache === undefined) {
-            cache = func(x);
-        }
-        return cache;
-    }
+    return x => cache || (cache = func(x));
 }
 
 
@@ -164,36 +155,17 @@ function retry(func, attempts) {
 function logger(func, logFunc) {
 
     return function() {
-        let str = func.name + '(';
-        let argstr = '';
-        let callingResult;
+        let callString = JSON.stringify(Array.from(arguments));
 
-        for (let i = 0; i < arguments.length; i++) {
+        callString = callString.substr(1, callString.length - 2);
+        callString = `${func.name}(${callString})`;
 
-            if (Array.isArray(arguments[i])) {
-                argstr += '[' + arguments[i] + ']';
-            } else {
-                argstr += arguments[i];
-            }
-            
-            if (i < arguments.length - 1) {
-                argstr += ',';
-            }
-        }
+        logFunc(callString + " starts");
+        let result = func.apply(null, arguments);
+        logFunc(callString + " ends");
 
-        //adding quotes to strings
-        argstr = argstr.replace(/[A-Za-z]+/g, '"$&"');
-        str += argstr + ')';
-
-        logFunc(str + ' starts');
-
-        callingResult = func.apply(this, arguments);
-
-        logFunc(str + ' ends');
-
-        return callingResult;
+        return result;
     }
-
 }
 
 
@@ -211,11 +183,11 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn) {
-    let args = Array.apply(null, arguments);
+    let args = Array.from(arguments);
 
     return function() { 
-        let inArgs =  Array.apply(null, arguments);
-        return fn.apply(null, args.slice(1).concat(inArgs));
+        args = args.slice(1).concat(Array.from(arguments));
+        return fn.apply(null, args);
     }
 }
 
@@ -239,9 +211,7 @@ function partialUsingArguments(fn) {
 function getIdGeneratorFunction(startFrom) {
     let curId = startFrom;
     
-    return () => {
-        return curId++;
-    }
+    return () => curId++;
 }
 
 

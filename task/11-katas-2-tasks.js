@@ -34,53 +34,60 @@
  *
  */
 function parseBankAccount(bankAccount) {
-    /* The idea of this solution is to make a base,
-     * containing each digit written with pipes and
-     * underscores.
-     *
-     * After that, we will extract digits in this form
-     * from given bank account and find this representation
-     * in already existing "database".
-     */
-    const digitsNumber = 10;
-    const stringsNum = 3;
-    const charPerDigit = 3;
-
-    let representation =    ' _     _  _     _  _  _  _  _ \n'+
-                            '| |  | _| _||_||_ |_   ||_||_|\n'+
-                            '|_|  ||_  _|  | _||_|  ||_| _|\n';
-
-    /* Transform strings into arrays */
-    representation = representation.split('\n');
-    bankAccount = bankAccount.split('\n');
     
-    let accLength = bankAccount[0].length;
-    let result = '';
-    let str = '';
+    let map = new Map();
+    map.set(" _ " +
+            "| |" +
+            "|_|", 0);
+    map.set("   " +
+            "  |" +
+            "  |", 1);
+    map.set(" _ " +
+            " _|" +
+            "|_ ", 2);
+    map.set(" _ " +
+            " _|" +
+            " _|", 3);
+    map.set("   " +
+            "|_|" +
+            "  |", 4);
+    map.set(" _ " +
+            "|_ " +
+            " _|", 5);
+    map.set(" _ " +
+            "|_ " +
+            "|_|", 6);
+    map.set(" _ " +
+            "  |" +
+            "  |", 7);
+    map.set(" _ " +
+            "|_|" +
+            "|_|", 8);
+    map.set(" _ " +
+            "|_|" +
+            " _|", 9);
 
-    let digits = [];
+    let accountLines = bankAccount.split('\n'),
+        length = accountLines[0].length,
+        result = "";
 
-    /* Making base of digits, where position equals to digit value */
-    for (let basePos = 0; basePos < digitsNumber; basePos++) {
-        str = '';
-        for (let n = 0; n < stringsNum; n++) {
-            str += representation[n].substring(charPerDigit * basePos, charPerDigit * basePos + 3);
-        }
-        digits.push(str);
-    }
-
-    /* Extracting numbers from bank account and searching for it
-     * in the digits(which contain digits representations) array 
-     */
-    for (let accPos = 0; accPos < (accLength - 2) / charPerDigit; accPos++) {
-        str = '';
-        for (let n = 0; n < stringsNum; n++) {
-            str += bankAccount[n].substring(charPerDigit * accPos, charPerDigit * accPos + 3);
-        }
-        result += digits.indexOf(str);
+    for (let i = 0; i < length; i += 3) {
+        result += map.get(getKey(i, accountLines));
     }
 
     return result;
+    
+    function getKey(i, lines) {
+        const   stringsNum = 3,
+                charPerDigit = 3;   
+                 
+        let     key = "";
+        
+        for (let k = 0; k < stringsNum; k++) {
+            key += lines[k].substr(i, charPerDigit);
+        }
+        return key;
+    }
 }
 
 
@@ -109,44 +116,22 @@ function parseBankAccount(bankAccount) {
  *                                                                                                'characters.'
  */
 function* wrapText(text, columns) {
-    /* The idea of this solution is to take symbols
-     * out of this text word by word and add it to 
-     * existing string only if the result string length
-     * won't be larger than given. In this case existing
-     * string will be yilded, and word will be added to
-     * empty string.
-     */
-    let outputString = '';
-    let word = '';
 
-    while (text) {
-        /* Taking word out of the text and checking existence of other words */
-        if (text.indexOf(' ') !== -1) {
-            word = text.slice(0, text.indexOf(' '));
-            text = text.slice(word.length + 1);
+    let result = "",
+        words = text.split(' ');
+    
+    for (let i = 0; i < words.length; i++) {
+
+        if (result.concat(' ', words[i]).length <= columns) {
+            result += (result.length !== 0 ? ' ' : '') + words[i];
+        } else {
+            yield result;
+            result = words[i];
         }
-        else {
-            word = text;
-            text = '';
-        }
-        
-        /* Checking length of new string */
-        if ((outputString + ' ' + word).length <= columns) {
-            /* Adding space if it is necessary */
-            if (outputString.length !== 0) {
-                outputString += ' ';
-            }
-            outputString += word;
-        }
-        else {
-            /* Passing string away if it length is bigger, than given */
-            yield outputString;
-            outputString = word;
-        }
+
     }
-    if (outputString.length !== 0) {
-        yield outputString;
-    }
+
+    yield result;
 }
 
 
@@ -183,145 +168,116 @@ const PokerRank = {
 }
 
 function getPokerHandRank(hand) {
-    /* The idea of this solution is to check all
-     * possible poker hand ranks.
-     *
-     * It's should be considered, that ace in 
-     * straight combinations can have both highest
-     * and lowest rank.
-     */
-    const cardCount = 5;
-    const cards = "A234567891JQK"; //Ace has lowest rank
-    const cardsAceHighest = "234567891JQKA"; //Ace has highest rank
-    const suits = "♣♦♥♠";
+    const cards = "234567891JQKA"; //Ace has highest rank
     
-    let sameArr = [];
-    let usedCards = [];
-    let sameCount = 0;
+    let sameArr = SameCards(hand),
+        isSameSuit = IsSameSuit(hand);
 
-    let isAceThere;
-    let isStraight = false;
-    let isSame = false;
-    
-    /* Ace presence check */
-    isAceThere = hand.reduce((prev, cur) => {
-        if (prev || cur[0] === 'A') {
-            return true;
+    hand.sort((a, b) => {
+        return cards.indexOf(a[0]) - cards.indexOf(b[0]);
+    })
+
+    /* Straight hand rank blocks presence of all other ranks */
+    if (IsStraight(hand)) {
+        if (isSameSuit) {
+            return PokerRank.StraightFlush;
         }
-        return false;
-    }, false);
+        return PokerRank.Straight;          
+    }
+    /* Checking all poker hand ranks in decreasing order*/
+    if (sameArr.length === 1 && sameArr[0] === 4)   
+        return PokerRank.FourOfKind;
+    if (sameArr.length === 2 && sameArr[0] === 2 && sameArr[1] === 3)   
+        return PokerRank.FullHouse;
+    if (isSameSuit)
+        return PokerRank.Flush;
+    if (sameArr.length === 1 && sameArr[0] === 3)
+        return PokerRank.ThreeOfKind;
+    if (sameArr.length === 2 && sameArr[0] === 2 && sameArr[1] === 2)
+        return PokerRank.TwoPairs;
+    if (sameArr.length === 1 && sameArr[0] === 2)
+        return PokerRank.OnePair;
     
-    /* If ace is present in hand, presence of the
-     * straight combination should be checked with
-     * both highest and lowest rank
-     */
-    if (isAceThere) {
-        /* Sorting hand with highest ace rank */
-        hand.sort((a, b) => {
-            return cardsAceHighest.indexOf(a[0]) - cardsAceHighest.indexOf(b[0]);
-        })
+    return PokerRank.HighCard;
+
+    function IsStraight(hand) {
+        const cards = "234567891JQKA";
+        const aceLowest = "A234567891JQK"; //Ace has lowest rank
+        let isStraight = false;
 
         isStraight = hand.reduce((prev, cur) => {
-            if (prev === false) {
+            if (!prev || cards.indexOf(prev[0]) + 1 !== cards.indexOf(cur[0])) {
                 return false;
             }
-            if (cardsAceHighest.indexOf(prev[0]) + 1 === cardsAceHighest.indexOf(cur[0])) {
-                return cur;
+            return cur;
+        }) !== false;
+
+        if (isStraight) {
+            return true;
+        } 
+
+        let isAceThere = hand.filter(cur => {
+            if (cur[0] === 'A') {
+                return true;
             }
             return false;
+        }).length > 0;
+
+        if (!isAceThere) {
+            return false;
+        }
+
+        hand.sort((a, b) => {
+            return aceLowest.indexOf(a[0]) - aceLowest.indexOf(b[0]);
+        });
+
+        return hand.reduce((prev, cur) => {
+            if (!prev || aceLowest.indexOf(prev[0]) + 1 !== aceLowest.indexOf(cur[0])) {
+                return false;
+            }
+            return cur;
         }) !== false;
     }
 
-    /* If there were no straight hand rank, we should
-     * check it's presence with ace considered as card 
-     * with lowest rank. In other case, straight hand 
-     * rank blocks presence of all other ranks
-     */
-    if (!isStraight) {
-        /* Sorting hand with lowest ace rank */
-        hand.sort((a, b) => {
-            return cards.indexOf(a[0]) - cards.indexOf(b[0]);
-        })
-        
-        isStraight = hand.reduce((prev, cur) => {
-            if (prev === false) {
-                return false;
+    function IsSameSuit(hand) {
+        return hand.reduce((prev, cur) => {
+            let suit = cur[cur.length - 1];
+            if (prev.indexOf(suit) === -1) {
+                return prev + suit;
             }
-            if (cards.indexOf(prev[0]) + 1 === cards.indexOf(cur[0])) {
-                return cur;
-            }
-            return false;
-        }) !== false;    
+            return prev;
+        }, '').length === 1;
     }
 
-    /* Checking for having rank with same suit cards */
-    isSame = hand.reduce((prev, cur) => {
-        if (prev.indexOf(cur[cur.length - 1]) === -1) {
-            return prev + cur[cur.length - 1];
-        }
-        return prev;
-    }, '').length === 1;
-    
-    /* Straight hand rank blocks presence of all other ranks */
-    if (isStraight) {
-        if (isSame) {
-            return PokerRank.StraightFlush;
-        }
-        else {
-            return PokerRank.Straight;          
-        }
-    }
-    
-    /* In other case, we should calculate cards repeats in hand
-     * despite of it's suit 
-     */
-    for (let current = 0; current < cardCount; current++) {
-        sameCount = 1;
-        /* If card wasn't counted earlier */
-        if (usedCards.indexOf(hand[current][0]) === -1) {
-            usedCards.push(hand[current][0]);
-            for (let i = current + 1; i < cardCount; i++) {
-                if (hand[i][0] === hand[current][0]){
-                    sameCount++;
-                }
+    function SameCards(hand) {
+        const cardCount = 5;
+
+        let checkedRanks = [],
+            repeats = [];
+        
+        hand.map((cur, index) => {
+            let sameCount = 1;
+
+            if (checkedRanks.indexOf(cur[0]) !== -1) {
+                return;
             }
-        }
-        /*If card occurs more than once*/
-        if (sameCount > 1) {
-            /* If it occurs twice - then we will put it in the start of array*/
+
+            checkedRanks.push(cur[0]);
+
+            for (let i = index + 1; i < cardCount; i++) {
+                if (hand[i][0] !== cur[0]) continue; 
+                sameCount++;
+            }
+
             if (sameCount === 2) {
-                sameArr.unshift(sameCount);
+                repeats.unshift(sameCount);
+            } else if (sameCount > 2) {
+                repeats.push(sameCount);
             }
-            /* If it occurs more than twice - in the end */
-            else {
-                sameArr.push(sameCount);
-            }
-        }
+        
+        });
+        return repeats;
     }
-    
-    /* Checking all poker hand ranks in decreasing order,
-     * except straight ranks, which was checked earlier *
-     */
-    if (sameArr.length === 1 && sameArr[0] === 4) {
-        return PokerRank.FourOfKind;
-    }  
-    else if (sameArr.length === 2 && sameArr[0] === 2 && sameArr[1] === 3) {
-        return PokerRank.FullHouse;
-    }
-    else if (isSame) {
-        return PokerRank.Flush;
-    }
-    else if (sameArr.length === 1 && sameArr[0] === 3) {
-        return PokerRank.ThreeOfKind;
-    }
-    else if (sameArr.length === 2 && sameArr[0] === 2 && sameArr[1] === 2) {
-        return PokerRank.TwoPairs;
-    }
-    else if (sameArr.length === 1 && sameArr[0] === 2) {
-        return PokerRank.OnePair;
-    }
-    
-    return PokerRank.HighCard;
 }
 
 
@@ -356,85 +312,58 @@ function getPokerHandRank(hand) {
  *    '+-------------+\n'
  */
 function* getFigureRectangles(figure) {
-    /* The idea of this solution is to find all
-     * pluses, representing corners of rectangles.
-     *
-     * Then each plus will be checked for neighbour
-     * pluses in the same row, and pair will be created
-     * between current plus and first of found. This
-     * pair should have no spaces(' ') between them.
-     * 
-     * Each pair will be checked for columns(|) of 
-     * arbitrary length under both pluses. Each column
-     * should end with another plus. In this case we
-     * will have a rectangular found;
-     */
-    let arr = figure.split('\n');
-    let plusArr = [];
-    let rectangles = [];
-    let nextPlus = 0;
-    let width = 0;
-    let height = 0;
-    let i, j, i2;
 
-    /* Finding pluses */
-    for (let j = 0; j < arr.length; j++) {
-        for (let i = 0; i < arr[0].length; i++) {
-            if (arr[j][i] === '+') {
-                plusArr.push([j, i]);
-            }
+    let arr = figure.split('\n'),
+        pluses = [],
+        rectangles = [];
+
+    arr.map((cur, line)=> {
+        let i = cur.indexOf('+');
+
+        while(i !== -1) {
+            pluses.push([line, i]);
+            i = cur.indexOf('+', i + 1);
         }
-    }
+    });
 
-    /* For every found plus */
-    for (let current = 0; current < plusArr.length; current++) {
-        /* Checking existing of the next plus in list */
-        if (current + 1 >= plusArr.length) {
-            break;
-        }
-        nextPlus = current + 1;
-        /* While next plus is at the same row */
-        while (plusArr[nextPlus][0] === plusArr[current][0]) {
+    for (let current = 0; current < pluses.length - 1; current++) {
 
-            j = plusArr[current][0];
-            i = plusArr[current][1];
-            i2 = plusArr[nextPlus][1];
-            
-            /* Width of possible rectangle and it's start height */
-            width = arr[j].slice(i + 1, i2).length;
-            height = 1;
+        let next = current + 1;
 
-            /* Check for empty space in top line of rectangle */
-            if (arr[j].slice(i + 1, i2).indexOf(' ') !== -1) {
-                break;
-            }
+        /* While next plus is on the same row */
+        while (pluses[next][0] === pluses[current][0]) {
 
-            /* Going down while there are '|' symbol on both sides of rectangle */
-            while (arr[j + height][i]  === '|' && arr[j + height][i2] === '|') {
+            let y = pluses[current][0],
+                x = pluses[current][1],
+                x2 = pluses[next][1],
+                width = arr[y].slice(x + 1, x2).length,
+                height = 1;
+
+            /* Check for no spaces in top line of rectangle */
+            // if (arr[y].slice(x + 1, x2).indexOf(' ') !== -1) {
+            //     break;
+            // }
+
+            while (arr[y + height][x]  === '|' && arr[y + height][x2] === '|') {
                 height++;
             }
-            /* If we've met plus on both side of possible rectangle - it means
-             * we've found one, and we should set current position to next plus
-             */
-            if (arr[j + height][i]  === '+' && arr[j + height][i2] === '+') {
-                rectangles.push({h: height - 1, w: width});   
+
+            if (arr[y + height][x]  === '+' && arr[y + height][x2] === '+') {
+                yield formRectangle({h: height - 1, w: width});   
                 break;      
             }
 
-            nextPlus++;
-            if (nextPlus >= plusArr.length) {
+            next++;
+            if (next >= pluses.length) {
                 break;
             }
         }
     }
 
-    /* Result forming */
-    i = 0;
-    while (i < rectangles.length) {
-        let topAndBottom = String.prototype.concat('+', '-'.repeat(rectangles[i].w), '+\n');
-        let filler = String.prototype.concat('|', ' '.repeat(rectangles[i].w), '|\n');
-        yield String.prototype.concat(topAndBottom, filler.repeat(rectangles[i].h), topAndBottom);
-        i++;
+    function formRectangle(rect) {
+        let topAndBottom = String.prototype.concat('+', '-'.repeat(rect.w), '+\n');
+        let filler = String.prototype.concat('|', ' '.repeat(rect.w), '|\n');
+        return String.prototype.concat(topAndBottom, filler.repeat(rect.h), topAndBottom);
     }
 }
 

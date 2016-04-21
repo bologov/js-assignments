@@ -111,7 +111,12 @@ function getLinearEquationRoot(a, b) {
  */
 function getAngleBetweenVectors(x1, y1, x2, y2) {
     let angle = Math.atan2(y2, x2) - Math.atan2(y1, x1);
-    return angle < 0 ? angle + 2 * Math.PI : angle;
+
+    if (angle < 0) {
+        angle += 2 * Math.PI;
+    }
+
+    return angle;
 }
 
 /**
@@ -182,6 +187,7 @@ function getParallelipidedDiagonal(a,b,c) {
  */
 function roundToPowerOfTen(num, pow) {
     let tenPow = Math.pow(10, pow);
+
     return Math.round(num / tenPow) * tenPow;
 }
 
@@ -204,9 +210,9 @@ function roundToPowerOfTen(num, pow) {
  */
 function isPrime(n) {
     for (let i = 2; i <= Math.sqrt(n); i++) {
-        if (n % i === 0) {
-            return false;
-        }
+        if (n % i !== 0) continue;
+        
+        return false;
     }
     return true;
 }
